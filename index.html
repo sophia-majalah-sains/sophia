@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sophia — Sains, Teknologi & Budaya untuk Keluarga Indonesia</title>
+<title>Sophia Sains, Teknologi & Budaya untuk Keluarga Indonesia</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -19,23 +19,99 @@
   --text: #2C3E50;
   --text-light: #5A6A7A;
   --text-lighter: #8A9AAA;
-  --terracotta: #C4622D;
-  --sage: #5C7A5E;
 }
 
 html { scroll-behavior: smooth; }
 
 body {
   font-family: 'DM Sans', sans-serif;
+  font-size: 17px;
   background: var(--warm-white);
   color: var(--text);
   overflow-x: hidden;
 }
 
+/* ===================== STICKY SIGNUP BAR ===================== */
+.sticky-bar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 200;
+  background: var(--navy);
+  padding: 10px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  transform: translateY(-100%);
+  transition: transform 0.35s ease;
+  box-shadow: 0 4px 20px rgba(26,39,68,0.25);
+}
+
+.sticky-bar.visible { transform: translateY(0); }
+
+.sticky-bar-text {
+  font-family: 'Playfair Display', serif;
+  font-size: 15px;
+  color: var(--cream);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.sticky-bar-text span { color: var(--gold); font-style: italic; }
+
+.sticky-bar-form {
+  display: flex;
+  gap: 10px;
+  flex: 1;
+  max-width: 400px;
+  margin-left: auto;
+}
+
+.sticky-bar-input {
+  flex: 1;
+  padding: 9px 16px;
+  border-radius: 100px;
+  border: 1.5px solid rgba(250,246,238,0.15);
+  background: rgba(250,246,238,0.08);
+  color: var(--cream);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.sticky-bar-input::placeholder { color: rgba(250,246,238,0.35); }
+.sticky-bar-input:focus { border-color: rgba(197,151,58,0.5); }
+
+.sticky-bar-btn {
+  background: var(--gold);
+  color: var(--navy);
+  border: none;
+  padding: 9px 20px;
+  border-radius: 100px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+
+.sticky-bar-btn:hover { background: var(--gold-light); }
+
+.sticky-success {
+  color: var(--gold);
+  font-size: 14px;
+  font-weight: 600;
+  display: none;
+  text-align: center;
+  flex: 1;
+}
+
 /* ===================== NAV ===================== */
 nav {
   position: fixed;
-  top: 0; left: 0; right: 0;
+  top: 48px; left: 0; right: 0;
   z-index: 100;
   padding: 0 48px;
   height: 64px;
@@ -45,12 +121,11 @@ nav {
   background: rgba(255,253,249,0.92);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(197,151,58,0.15);
-  transition: box-shadow 0.3s;
+  transition: top 0.35s ease, box-shadow 0.3s;
 }
 
-nav.scrolled {
-  box-shadow: 0 4px 24px rgba(26,39,68,0.08);
-}
+nav.bar-hidden { top: 0; }
+nav.scrolled { box-shadow: 0 4px 24px rgba(26,39,68,0.08); }
 
 .nav-brand {
   display: flex;
@@ -109,11 +184,10 @@ nav.scrolled {
 }
 
 .nav-links a {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--text-light);
   text-decoration: none;
-  letter-spacing: 0.3px;
   transition: color 0.2s;
 }
 
@@ -124,7 +198,7 @@ nav.scrolled {
   color: var(--cream) !important;
   padding: 8px 20px;
   border-radius: 100px;
-  font-size: 13px !important;
+  font-size: 14px !important;
   font-weight: 600 !important;
   transition: background 0.2s !important;
 }
@@ -134,7 +208,7 @@ nav.scrolled {
 /* ===================== HERO ===================== */
 .hero {
   min-height: 100vh;
-  padding: 64px 0 0;
+  padding-top: 112px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   overflow: hidden;
@@ -157,7 +231,7 @@ nav.scrolled {
   background: rgba(197,151,58,0.12);
   border: 1px solid rgba(197,151,58,0.3);
   color: #8B6914;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -177,11 +251,11 @@ nav.scrolled {
 
 .hero-title {
   font-family: 'Playfair Display', serif;
-  font-size: clamp(40px, 4.5vw, 58px);
+  font-size: clamp(44px, 4.5vw, 60px);
   font-weight: 700;
   color: var(--navy);
   line-height: 1.15;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   animation: fadeUp 0.6s 0.1s ease both;
 }
 
@@ -192,15 +266,15 @@ nav.scrolled {
 
 .hero-subtitle {
   font-family: 'Lora', serif;
-  font-size: 16px;
+  font-size: 17px;
   color: var(--text-light);
   font-style: italic;
-  margin-bottom: 24px;
+  margin-bottom: 26px;
   animation: fadeUp 0.6s 0.2s ease both;
 }
 
 .hero-desc {
-  font-size: 16px;
+  font-size: 17px;
   line-height: 1.8;
   color: var(--text);
   max-width: 440px;
@@ -225,13 +299,12 @@ nav.scrolled {
   background: var(--navy);
   color: var(--cream);
   font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
-  padding: 14px 28px;
+  padding: 15px 30px;
   border-radius: 100px;
   text-decoration: none;
   transition: all 0.25s;
-  letter-spacing: 0.3px;
   box-shadow: 0 4px 20px rgba(26,39,68,0.2);
 }
 
@@ -242,14 +315,11 @@ nav.scrolled {
   transform: translateY(-2px);
 }
 
-.btn-primary .arrow {
-  transition: transform 0.25s;
-}
-
+.btn-primary .arrow { transition: transform 0.25s; }
 .btn-primary:hover .arrow { transform: translateX(4px); }
 
 .btn-secondary {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--text-light);
   text-decoration: none;
@@ -270,18 +340,18 @@ nav.scrolled {
 .hero-meta-item {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
 }
 
 .hero-meta-value {
   font-family: 'Playfair Display', serif;
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 700;
   color: var(--navy);
 }
 
 .hero-meta-label {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-lighter);
   letter-spacing: 0.5px;
 }
@@ -292,7 +362,7 @@ nav.scrolled {
   align-self: stretch;
 }
 
-/* Hero right — illustration area */
+/* Hero right */
 .hero-right {
   background: var(--cream);
   position: relative;
@@ -326,14 +396,12 @@ nav.scrolled {
   animation: floatUp 0.8s 0.3s ease both;
 }
 
-/* Magazine mockup */
 .magazine-mockup {
   width: 280px;
   background: var(--navy);
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 32px 80px rgba(26,39,68,0.25), 0 8px 24px rgba(26,39,68,0.15);
-  position: relative;
 }
 
 .mag-header {
@@ -433,7 +501,6 @@ nav.scrolled {
   border-radius: 4px;
 }
 
-/* Floating cards */
 .float-card {
   position: absolute;
   background: white;
@@ -447,15 +514,8 @@ nav.scrolled {
   animation: float 4s ease-in-out infinite;
 }
 
-.float-card-1 {
-  top: 15%; right: -10px;
-  animation-delay: 0s;
-}
-
-.float-card-2 {
-  bottom: 20%; left: -20px;
-  animation-delay: 1.5s;
-}
+.float-card-1 { top: 15%; right: -10px; animation-delay: 0s; }
+.float-card-2 { bottom: 20%; left: -20px; animation-delay: 1.5s; }
 
 .float-card-icon {
   width: 32px; height: 32px;
@@ -468,16 +528,8 @@ nav.scrolled {
 .float-card-1 .float-card-icon { background: rgba(197,151,58,0.12); }
 .float-card-2 .float-card-icon { background: rgba(26,39,68,0.06); }
 
-.float-card-text { }
-.float-card-title {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--navy);
-}
-.float-card-sub {
-  font-size: 10px;
-  color: var(--text-lighter);
-}
+.float-card-title { font-size: 13px; font-weight: 700; color: var(--navy); }
+.float-card-sub { font-size: 11px; color: var(--text-lighter); }
 
 /* ===================== RUBRICS ===================== */
 .rubrics {
@@ -486,7 +538,7 @@ nav.scrolled {
 }
 
 .section-label {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 3px;
   text-transform: uppercase;
@@ -505,17 +557,17 @@ nav.scrolled {
 
 .section-title {
   font-family: 'Playfair Display', serif;
-  font-size: clamp(28px, 3vw, 40px);
+  font-size: clamp(30px, 3vw, 42px);
   font-weight: 700;
   color: var(--navy);
   line-height: 1.2;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
 
 .section-desc {
-  font-size: 16px;
+  font-size: 17px;
   color: var(--text-light);
-  line-height: 1.7;
+  line-height: 1.75;
   max-width: 520px;
   margin-bottom: 56px;
 }
@@ -529,7 +581,7 @@ nav.scrolled {
 .rubric-card {
   background: var(--cream);
   border-radius: 16px;
-  padding: 28px 28px 32px;
+  padding: 30px 28px 34px;
   position: relative;
   overflow: hidden;
   transition: transform 0.3s, box-shadow 0.3s;
@@ -554,33 +606,34 @@ nav.scrolled {
 
 .rubric-card:hover::before { transform: scaleX(1); }
 
-.rubric-icon {
-  font-size: 32px;
+.rubric-icon-wrap {
+  width: 42px; height: 42px;
+  border-radius: 10px;
+  background: rgba(197,151,58,0.1);
+  display: flex; align-items: center; justify-content: center;
   margin-bottom: 16px;
-  display: block;
 }
+
+.rubric-icon-wrap svg { width: 20px; height: 20px; }
 
 .rubric-name {
   font-family: 'Playfair Display', serif;
-  font-size: 18px;
+  font-size: 19px;
   font-weight: 700;
   color: var(--navy);
   margin-bottom: 8px;
 }
 
 .rubric-desc {
-  font-size: 13.5px;
+  font-size: 14.5px;
   line-height: 1.7;
   color: var(--text-light);
 }
 
-.rubric-card.featured {
-  background: var(--navy);
-  grid-column: span 1;
-}
-
+.rubric-card.featured { background: var(--navy); }
 .rubric-card.featured .rubric-name { color: var(--cream); }
 .rubric-card.featured .rubric-desc { color: rgba(250,246,238,0.65); }
+.rubric-card.featured .rubric-icon-wrap { background: rgba(197,151,58,0.15); }
 .rubric-card.featured::before { background: var(--gold); }
 
 /* ===================== ABOUT ===================== */
@@ -593,44 +646,34 @@ nav.scrolled {
   align-items: center;
 }
 
-.about-text {}
-
 .about-values {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 22px;
   margin-top: 40px;
 }
 
-.about-value {
-  display: flex;
-  gap: 16px;
-  align-items: flex-start;
-}
+.about-value { display: flex; gap: 16px; align-items: flex-start; }
 
 .about-value-dot {
   width: 10px; height: 10px;
   background: var(--gold);
   border-radius: 50%;
   flex-shrink: 0;
-  margin-top: 6px;
+  margin-top: 7px;
 }
 
-.about-value-text {}
 .about-value-title {
   font-weight: 700;
-  font-size: 15px;
+  font-size: 16px;
   color: var(--navy);
-  margin-bottom: 3px;
-}
-.about-value-desc {
-  font-size: 13.5px;
-  color: var(--text-light);
-  line-height: 1.6;
+  margin-bottom: 4px;
 }
 
-.about-visual {
-  position: relative;
+.about-value-desc {
+  font-size: 15px;
+  color: var(--text-light);
+  line-height: 1.65;
 }
 
 .about-card-main {
@@ -653,7 +696,7 @@ nav.scrolled {
 
 .about-card-quote {
   font-family: 'Playfair Display', serif;
-  font-size: 42px;
+  font-size: 48px;
   color: var(--gold);
   line-height: 1;
   margin-bottom: 8px;
@@ -661,10 +704,10 @@ nav.scrolled {
 
 .about-card-text {
   font-family: 'Lora', serif;
-  font-size: 17px;
+  font-size: 18px;
   font-style: italic;
   color: var(--cream);
-  line-height: 1.6;
+  line-height: 1.65;
   margin-bottom: 20px;
 }
 
@@ -697,7 +740,7 @@ nav.scrolled {
 }
 
 .about-mini-label {
-  font-size: 11px;
+  font-size: 12px;
   color: rgba(250,246,238,0.55);
   margin-top: 2px;
 }
@@ -706,6 +749,21 @@ nav.scrolled {
 .article-teaser {
   padding: 100px 80px;
   background: var(--warm-white);
+  text-align: center;
+}
+
+.article-teaser .section-label {
+  justify-content: center;
+}
+
+.article-teaser .section-label::before { display: none; }
+
+.article-teaser .section-title { text-align: center; }
+
+.article-teaser .section-desc {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
 }
 
 .article-card {
@@ -717,6 +775,8 @@ nav.scrolled {
   box-shadow: 0 8px 40px rgba(26,39,68,0.08);
   border: 1px solid rgba(197,151,58,0.1);
   max-width: 900px;
+  margin: 0 auto;
+  text-align: left;
 }
 
 .article-card-visual {
@@ -740,7 +800,7 @@ nav.scrolled {
 }
 
 .article-edition {
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 3px;
   text-transform: uppercase;
   color: var(--gold);
@@ -785,7 +845,7 @@ nav.scrolled {
 }
 
 .article-content-label {
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 2.5px;
   text-transform: uppercase;
   color: var(--gold);
@@ -795,7 +855,7 @@ nav.scrolled {
 
 .article-content-title {
   font-family: 'Playfair Display', serif;
-  font-size: 20px;
+  font-size: 21px;
   font-weight: 700;
   color: var(--navy);
   margin-bottom: 16px;
@@ -803,7 +863,7 @@ nav.scrolled {
 }
 
 .article-content-body {
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.8;
   color: var(--text-light);
   margin-bottom: 28px;
@@ -815,7 +875,7 @@ nav.scrolled {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--navy);
   text-decoration: none;
@@ -823,7 +883,6 @@ nav.scrolled {
   padding-bottom: 3px;
   width: fit-content;
   transition: all 0.2s;
-  letter-spacing: 0.3px;
 }
 
 .btn-read:hover { color: var(--gold); gap: 12px; }
@@ -858,7 +917,7 @@ nav.scrolled {
 }
 
 .cta-label {
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 3px;
   text-transform: uppercase;
   color: var(--gold);
@@ -878,7 +937,7 @@ nav.scrolled {
 
 .cta-title {
   font-family: 'Playfair Display', serif;
-  font-size: clamp(32px, 4vw, 52px);
+  font-size: clamp(34px, 4vw, 54px);
   font-weight: 700;
   color: var(--cream);
   line-height: 1.2;
@@ -890,9 +949,9 @@ nav.scrolled {
 .cta-title em { font-style: italic; color: var(--gold); }
 
 .cta-desc {
-  font-size: 16px;
+  font-size: 17px;
   color: rgba(250,246,238,0.65);
-  line-height: 1.7;
+  line-height: 1.75;
   max-width: 480px;
   margin: 0 auto 40px;
   position: relative;
@@ -910,13 +969,13 @@ nav.scrolled {
 
 .cta-input {
   flex: 1;
-  padding: 14px 20px;
+  padding: 15px 20px;
   border-radius: 100px;
   border: 1.5px solid rgba(250,246,238,0.15);
   background: rgba(250,246,238,0.07);
   color: var(--cream);
   font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
+  font-size: 15px;
   outline: none;
   transition: border-color 0.2s;
 }
@@ -928,10 +987,10 @@ nav.scrolled {
   background: var(--gold);
   color: var(--navy);
   border: none;
-  padding: 14px 28px;
+  padding: 15px 28px;
   border-radius: 100px;
   font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
@@ -945,10 +1004,11 @@ nav.scrolled {
 }
 
 .cta-note {
-  font-size: 12px;
+  font-size: 13px;
   color: rgba(250,246,238,0.35);
   position: relative;
   z-index: 1;
+  min-height: 20px;
 }
 
 .cta-freq {
@@ -964,14 +1024,88 @@ nav.scrolled {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 13px;
+  font-size: 14px;
   color: rgba(250,246,238,0.5);
 }
 
 .cta-freq-item::before {
-  content: '✓';
+  content: 'v';
+  font-family: serif;
   color: var(--gold);
   font-weight: 700;
+  font-size: 13px;
+}
+
+/* ===================== TEASER PDF ROW ===================== */
+.teaser-pdf-row {
+  margin-top: 40px;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.teaser-pdf-card {
+  background: var(--navy);
+  border-radius: 16px;
+  padding: 32px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  border: 1px solid rgba(197,151,58,0.2);
+}
+
+.teaser-pdf-left { flex: 1; }
+
+.teaser-pdf-label {
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.teaser-pdf-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--cream);
+  line-height: 1.35;
+  margin-bottom: 8px;
+}
+
+.teaser-pdf-desc {
+  font-size: 14px;
+  color: rgba(250,246,238,0.55);
+  line-height: 1.65;
+}
+
+.btn-pdf {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--gold);
+  color: var(--navy);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 14px 26px;
+  border-radius: 100px;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.btn-pdf:hover {
+  background: var(--gold-light);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(197,151,58,0.3);
+}
+
+@media (max-width: 900px) {
+  .teaser-pdf-card { flex-direction: column; text-align: center; }
 }
 
 /* ===================== FOOTER ===================== */
@@ -983,11 +1117,7 @@ footer {
   justify-content: space-between;
 }
 
-.footer-brand {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
+.footer-brand { display: flex; flex-direction: column; gap: 6px; }
 
 .footer-name {
   font-family: 'Playfair Display', serif;
@@ -998,7 +1128,7 @@ footer {
 }
 
 .footer-sub {
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 2.5px;
   text-transform: uppercase;
   color: rgba(197,151,58,0.6);
@@ -1006,16 +1136,16 @@ footer {
 
 .footer-slogan {
   font-family: 'Lora', serif;
-  font-size: 13px;
+  font-size: 14px;
   font-style: italic;
   color: rgba(250,246,238,0.3);
   max-width: 320px;
   text-align: center;
-  line-height: 1.6;
+  line-height: 1.65;
 }
 
 .footer-copy {
-  font-size: 12px;
+  font-size: 13px;
   color: rgba(250,246,238,0.2);
   text-align: right;
 }
@@ -1042,17 +1172,16 @@ footer {
   transition: opacity 0.7s ease, transform 0.7s ease;
 }
 
-.reveal.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
+.reveal.visible { opacity: 1; transform: translateY(0); }
 
 /* ===================== RESPONSIVE ===================== */
 @media (max-width: 900px) {
-  nav { padding: 0 24px; }
+  .sticky-bar { padding: 10px 20px; flex-wrap: wrap; top: -200px; }
+  .sticky-bar-text { font-size: 13px; }
+  nav { padding: 0 24px; top: 0 !important; }
   .nav-links { display: none; }
-  .hero { grid-template-columns: 1fr; min-height: auto; }
-  .hero-left { padding: 100px 32px 48px; }
+  .hero { grid-template-columns: 1fr; min-height: auto; padding-top: 80px; }
+  .hero-left { padding: 60px 32px 48px; }
   .hero-right { display: none; }
   .rubrics { padding: 64px 32px; }
   .rubrics-grid { grid-template-columns: 1fr 1fr; }
@@ -1061,13 +1190,23 @@ footer {
   .article-card { grid-template-columns: 1fr; }
   .cta-section { padding: 80px 32px; }
   .cta-form { flex-direction: column; }
+  .cta-freq { flex-wrap: wrap; gap: 16px; }
   footer { flex-direction: column; gap: 24px; text-align: center; padding: 40px 32px; }
-  .footer-slogan { text-align: center; }
-  .footer-copy { text-align: center; }
+  .footer-slogan, .footer-copy { text-align: center; }
 }
 </style>
 </head>
 <body>
+
+<!-- STICKY SIGNUP BAR -->
+<div class="sticky-bar" id="sticky-bar">
+  <div class="sticky-bar-text">Sophia <span>Gratis, langsung ke inbox kamu</span></div>
+  <form class="sticky-bar-form" id="sticky-form" action="https://formspree.io/f/mgobolpq" method="POST">
+    <input type="email" name="email" class="sticky-bar-input" placeholder="Email kamu..." required>
+    <button type="submit" class="sticky-bar-btn" id="sticky-btn">Daftar Gratis</button>
+  </form>
+  <div class="sticky-success" id="sticky-success">Terima kasih! Kami akan segera mengirimkan edisi pertama.</div>
+</div>
 
 <!-- NAV -->
 <nav id="navbar">
@@ -1089,17 +1228,17 @@ footer {
 <!-- HERO -->
 <section class="hero">
   <div class="hero-left">
-    <div class="hero-badge">✦ Gratis · Majalah Digital Indonesia</div>
+    <div class="hero-badge">Gratis · Majalah Digital Indonesia</div>
     <h1 class="hero-title">
       Rasa Ingin Tahu,<br><em>Awal Pembelajaran.</em>
     </h1>
     <p class="hero-subtitle">Curiosity is where knowledge begins.</p>
     <p class="hero-desc">
-      Majalah digital untuk <strong>keluarga Indonesia</strong> yang ingin memahami sains, teknologi, dan budaya — dengan cara yang hangat, mudah, dan menyenangkan untuk dibaca bersama.
+      Majalah digital untuk <strong>keluarga Indonesia</strong> yang ingin memahami sains, teknologi, dan budaya. Ditulis bukan sebagai buku teks tapi seperti obrolan dengan teman yang kebetulan tahu banyak hal.
     </p>
     <div class="hero-actions">
       <a href="#daftar" class="btn-primary">
-        Mulai Petualanganmu
+        Daftar Sekarang
         <span class="arrow">→</span>
       </a>
       <a href="#artikel" class="btn-secondary">
@@ -1113,9 +1252,9 @@ footer {
       </div>
       <div class="hero-meta-divider"></div>
       <div class="hero-meta-item">
-          <span class="hero-meta-value">Rutin</span>
-          <span class="hero-meta-label">Terbit berkala</span>
-        </div>
+        <span class="hero-meta-value">Rutin</span>
+        <span class="hero-meta-label">Terbit berkala</span>
+      </div>
       <div class="hero-meta-divider"></div>
       <div class="hero-meta-item">
         <span class="hero-meta-value">6</span>
@@ -1133,10 +1272,10 @@ footer {
             <span class="mag-issue">Edisi 1 · 2026</span>
           </div>
           <div class="mag-title">AI Sudah Ada di Kantongmu</div>
-          <div class="mag-rubric">✦ Teknologi</div>
+          <div class="mag-rubric">Teknologi</div>
         </div>
         <div class="mag-body">
-          <div class="mag-img-placeholder">🤖</div>
+          <div class="mag-img-placeholder">[ foto ]</div>
           <div class="mag-line"></div>
           <div class="mag-line"></div>
           <div class="mag-line"></div>
@@ -1150,7 +1289,7 @@ footer {
       </div>
 
       <div class="float-card float-card-1">
-        <div class="float-card-icon">📖</div>
+        <div class="float-card-icon">[ ]</div>
         <div class="float-card-text">
           <div class="float-card-title">Mudah dipahami</div>
           <div class="float-card-sub">Untuk semua usia</div>
@@ -1158,7 +1297,7 @@ footer {
       </div>
 
       <div class="float-card float-card-2">
-        <div class="float-card-icon">👨‍👩‍👧</div>
+        <div class="float-card-icon">[ ]</div>
         <div class="float-card-text">
           <div class="float-card-title">Untuk keluarga</div>
           <div class="float-card-sub">Baca bersama-sama</div>
@@ -1172,40 +1311,69 @@ footer {
 <section class="rubrics" id="rubrik">
   <div class="reveal">
     <div class="section-label">Yang kamu dapat</div>
-    <h2 class="section-title">Enam Rubrik,<br>Satu Majalah untuk Semua</h2>
-    <p class="section-desc">Dari laboratorium sains hingga dapur kebudayaan — setiap edisi Sophia membawa cerita yang membuat kamu dan keluarga ingin tahu lebih banyak.</p>
+    <h2 class="section-title">Enam rubrik,<br>satu majalah untuk semua</h2>
+    <p class="section-desc">Setiap edisi Sophia membawa enam topik yang berbeda dari cara kerja vaksin sampai sejarah batik yang mungkin belum pernah kamu dengar sebelumnya.</p>
   </div>
 
   <div class="rubrics-grid reveal">
     <div class="rubric-card">
-      <span class="rubric-icon">🔬</span>
+      <div class="rubric-icon-wrap">
+        <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="10" cy="10" r="3" stroke="#C5973A" stroke-width="1.5"/>
+          <path d="M10 2v2M10 16v2M2 10h2M16 10h2" stroke="#C5973A" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
       <div class="rubric-name">Sains</div>
-      <div class="rubric-desc">Temuan ilmiah terbaru dijelaskan lewat analogi dari kehidupan sehari-hari. Tidak perlu latar belakang ilmu pengetahuan.</div>
+      <div class="rubric-desc">Temuan ilmiah terbaru, dijelaskan lewat contoh dari kehidupan sehari-hari. Tidak perlu latar belakang ilmu pengetahuan untuk mengerti.</div>
     </div>
     <div class="rubric-card featured">
-      <span class="rubric-icon">💻</span>
+      <div class="rubric-icon-wrap">
+        <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="4" width="14" height="10" rx="2" stroke="#C5973A" stroke-width="1.5"/>
+          <path d="M7 17h6" stroke="#C5973A" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
       <div class="rubric-name">Teknologi</div>
-      <div class="rubric-desc">Cara kerja AI, gadget, dan internet — dibahas jujur dan mudah dimengerti, bukan sekadar iklan produk.</div>
+      <div class="rubric-desc">Bagaimana AI, gadget, dan internet benar-benar bekerja dibahas apa adanya, bukan sekadar mengikuti tren atau promosi produk.</div>
     </div>
     <div class="rubric-card">
-      <span class="rubric-icon">🏛️</span>
+      <div class="rubric-icon-wrap">
+        <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 16V8l6-5 6 5v8" stroke="#C5973A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <rect x="8" y="11" width="4" height="5" rx="1" stroke="#C5973A" stroke-width="1.5"/>
+        </svg>
+      </div>
       <div class="rubric-name">Budaya</div>
-      <div class="rubric-desc">Warisan, tradisi, dan identitas Indonesia dilihat dari kacamata modern. Bangga jadi orang Indonesia.</div>
+      <div class="rubric-desc">Tradisi dan identitas Indonesia dilihat lebih dekat bukan sekadar nostalgia, tapi juga pertanyaan tentang ke mana kita pergi.</div>
     </div>
     <div class="rubric-card">
-      <span class="rubric-icon">👧</span>
+      <div class="rubric-icon-wrap">
+        <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="10" cy="7" r="3" stroke="#C5973A" stroke-width="1.5"/>
+          <path d="M5 17c0-2.76 2.24-5 5-5s5 2.24 5 5" stroke="#C5973A" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
       <div class="rubric-name">Pojok Anak</div>
-      <div class="rubric-desc">Konten sains dan budaya khusus untuk si kecil usia SD–SMP. Seru, singkat, dan bikin penasaran.</div>
+      <div class="rubric-desc">Artikel sains dan budaya untuk anak usia SD dan SMP. Pendek, jelas, dan cukup menarik untuk dibaca sambil nunggu makan siang.</div>
     </div>
     <div class="rubric-card">
-      <span class="rubric-icon">💊</span>
+      <div class="rubric-icon-wrap">
+        <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 3a7 7 0 100 14A7 7 0 0010 3z" stroke="#C5973A" stroke-width="1.5"/>
+          <path d="M10 7v3l2 2" stroke="#C5973A" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
       <div class="rubric-name">Kesehatan</div>
-      <div class="rubric-desc">Tips sehat berbasis fakta ilmiah — bukan mitos, bukan iklan. Untuk keputusan yang lebih baik setiap hari.</div>
+      <div class="rubric-desc">Informasi kesehatan yang bisa dicek sumbernya bukan mitos yang beredar di grup WhatsApp, bukan iklan suplemen.</div>
     </div>
     <div class="rubric-card">
-      <span class="rubric-icon">⭐</span>
+      <div class="rubric-icon-wrap">
+        <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 2l2.09 4.26L17 7.27l-3.5 3.41.83 4.82L10 13.27l-4.33 2.23.83-4.82L3 7.27l4.91-.01z" stroke="#C5973A" stroke-width="1.5" stroke-linejoin="round"/>
+        </svg>
+      </div>
       <div class="rubric-name">Tokoh Inspiratif</div>
-      <div class="rubric-desc">Kisah nyata dari tokoh Indonesia dan dunia yang memberi dampak positif bagi masyarakat.</div>
+      <div class="rubric-desc">Kisah nyata dari orang-orang Indonesia dan dunia yang membuat sesuatu berubah bukan hanya yang terkenal, tapi yang bermakna.</div>
     </div>
   </div>
 </section>
@@ -1214,30 +1382,30 @@ footer {
 <section class="about" id="tentang">
   <div class="about-text reveal">
     <div class="section-label">Tentang Sophia</div>
-    <h2 class="section-title">Teman Belajar<br>Sekeluarga</h2>
-    <p style="font-size:16px;line-height:1.8;color:var(--text-light);margin-bottom:8px;">Sophia lahir dari keyakinan sederhana: setiap keluarga berhak mendapat informasi yang berkualitas, akurat, dan menyenangkan untuk dikonsumsi bersama.</p>
-    <p style="font-size:16px;line-height:1.8;color:var(--text-light);">Kami bukan buku teks. Kami bukan berita. Kami adalah teman yang hangat dan terpercaya — yang datang dua kali sebulan membawa cerita segar.</p>
+    <h2 class="section-title">Teman belajar<br>sekeluarga</h2>
+    <p style="font-size:17px;line-height:1.8;color:var(--text-light);margin-bottom:10px;">Sophia lahir dari pertanyaan sederhana: kenapa informasi yang bagus harus terasa berat untuk dibaca?</p>
+    <p style="font-size:17px;line-height:1.8;color:var(--text-light);">Kami bukan buku teks. Kami bukan portal berita. Sophia adalah teman yang datang berkala membawa cerita yang bisa kamu baca sendiri, atau bareng anak-anak di rumah.</p>
 
     <div class="about-values">
       <div class="about-value">
         <div class="about-value-dot"></div>
         <div class="about-value-text">
-          <div class="about-value-title">Berbasis Fakta</div>
-          <div class="about-value-desc">Semua konten berdasarkan sumber ilmiah dan informasi yang dapat diverifikasi. Tidak ada spekulasi atau mitos.</div>
+          <div class="about-value-title">Berbasis fakta</div>
+          <div class="about-value-desc">Semua konten bersumber dari penelitian dan data yang bisa dicek. Tidak ada klaim tanpa dasar.</div>
         </div>
       </div>
       <div class="about-value">
         <div class="about-value-dot"></div>
         <div class="about-value-text">
-          <div class="about-value-title">Bahasa yang Hangat</div>
-          <div class="about-value-desc">Ditulis seperti berbicara dengan teman — tidak kaku, tidak menggurui, selalu mengundang rasa ingin tahu.</div>
+          <div class="about-value-title">Bahasa yang manusiawi</div>
+          <div class="about-value-desc">Ditulis seperti ngobrol tidak kaku, tidak menggurui, tidak pakai jargon yang tidak perlu.</div>
         </div>
       </div>
       <div class="about-value">
         <div class="about-value-dot"></div>
         <div class="about-value-text">
-          <div class="about-value-title">Untuk Semua Umur</div>
-          <div class="about-value-desc">Dari orang tua hingga anak SD — ada sesuatu untuk semua anggota keluarga di setiap edisi.</div>
+          <div class="about-value-title">Untuk semua umur</div>
+          <div class="about-value-desc">Ada yang untuk orang tua, ada yang untuk anak SD. Satu majalah, bisa dibaca bareng.</div>
         </div>
       </div>
     </div>
@@ -1247,7 +1415,7 @@ footer {
     <div class="about-card-main">
       <div class="about-card-quote">"</div>
       <div class="about-card-text">Belajar bersama sekeluarga, mempersiapkan masa depan lebih aman dan tenang dengan pengetahuan dan rasa ingin tahu.</div>
-      <div class="about-card-attr">— Sophia · Brand Slogan</div>
+      <div class="about-card-attr">Sophia</div>
       <div class="about-card-mini">
         <div class="about-mini-item">
           <div class="about-mini-val">Rutin</div>
@@ -1274,17 +1442,17 @@ footer {
 <section class="article-teaser" id="artikel">
   <div class="reveal" style="margin-bottom:40px;">
     <div class="section-label">Dari edisi perdana</div>
-    <h2 class="section-title">Intip Isi Sophia</h2>
-    <p class="section-desc">Ini sekilas dari artikel pertama kami. Daftar sekarang untuk baca versi lengkapnya.</p>
+    <h2 class="section-title">Intip isi Sophia</h2>
+    <p class="section-desc">Ini cuplikan dari artikel pertama kami. Daftar untuk baca versi lengkapnya.</p>
   </div>
 
   <div class="article-card reveal">
     <div class="article-card-visual">
       <div>
-        <div class="article-edition">✦ Edisi 1 · Teknologi</div>
+        <div class="article-edition">Edisi 1 · Teknologi</div>
       </div>
       <div class="article-card-title">
-        AI Sudah Ada di Kantongmu — Kamu Sudah Kenal Betul Belum?
+        AI Sudah Ada di Kantongmu Kamu Sudah Kenal Betul Belum?
       </div>
       <div class="article-card-meta">
         <span class="article-meta-tag">Teknologi</span>
@@ -1295,13 +1463,26 @@ footer {
 
     <div class="article-card-content">
       <div class="article-content-label">Cuplikan artikel</div>
-      <div class="article-content-title">Kenapa penting buat kamu dan anak-anakmu?</div>
+      <div class="article-content-title">Kenapa ini penting buat kamu dan anak-anakmu?</div>
       <p class="article-content-body">
-        Setiap hari kamu pakai Google Maps, Spotify, atau filter kamera HP. Tapi tahukah kamu — semua itu dijalankan oleh <strong>kecerdasan buatan (AI)</strong>?<br><br>
-        Bukan teknologi masa depan. Bukan hanya milik ilmuwan. AI sudah bekerja diam-diam di kehidupan kita sejak lama — dan memahaminya bisa membantu kita membuat keputusan yang lebih cerdas setiap hari.
+        Setiap hari kamu pakai Google Maps, Spotify, atau filter kamera HP. Semua itu dijalankan oleh <strong>kecerdasan buatan (AI)</strong>.<br><br>
+        Bukan teknologi masa depan. AI sudah bekerja di kehidupan kita sejak lama. Dan memahami cara kerjanya bahkan sedikit saja membantu kita membuat keputusan yang lebih sadar setiap hari.
       </p>
       <a href="#daftar" class="btn-read">
-        Yuk, kita selami → <span style="font-size:11px;color:var(--text-lighter);">Daftar dulu</span>
+        Baca selengkapnya setelah daftar →
+      </a>
+    </div>
+  </div>
+
+  <div class="teaser-pdf-row reveal">
+    <div class="teaser-pdf-card">
+      <div class="teaser-pdf-left">
+        <div class="teaser-pdf-label">Edisi teaser tersedia</div>
+        <div class="teaser-pdf-title">Belum yakin? Baca edisi teaser dulu gratis, tidak perlu email.</div>
+        <div class="teaser-pdf-desc">Lihat sendiri seperti apa isi Sophia sebelum kamu memutuskan untuk daftar.</div>
+      </div>
+      <a href="https://fariz-armesta.github.io/sophia/teaser.pdf" target="_blank" class="btn-pdf">
+        Baca Edisi Teaser →
       </a>
     </div>
   </div>
@@ -1310,16 +1491,16 @@ footer {
 <!-- CTA -->
 <section class="cta-section" id="daftar">
   <div class="cta-label">Bergabung sekarang</div>
-  <h2 class="cta-title">Mulai Petualangan<br><em>Bersama Sophia</em></h2>
-  <p class="cta-desc">Gratis. Tidak perlu kartu kredit. Cukup masukkan email kamu dan edisi pertama langsung masuk ke inbox.</p>
+  <h2 class="cta-title">Mulai petualangan<br><em>bersama Sophia</em></h2>
+  <p class="cta-desc">Gratis. Tidak perlu kartu kredit. Masukkan email kamu dan edisi pertama langsung masuk ke inbox.</p>
 
   <form class="cta-form" id="signup-form" action="https://formspree.io/f/mgobolpq" method="POST">
     <input type="email" name="email" class="cta-input" placeholder="Masukkan email kamu..." required>
     <button type="submit" class="cta-submit" id="submit-btn">Daftar Gratis →</button>
   </form>
   <p class="cta-note" id="cta-note"></p>
-  <p class="cta-note" id="success-msg" style="display:none;color:var(--gold);font-size:14px;">🎉 Terima kasih! Kamu sudah terdaftar. Sampai jumpa di edisi pertama!</p>
-  <p class="cta-note" id="error-msg" style="display:none;color:#e07070;font-size:14px;">Ups, ada masalah. Coba lagi ya.</p>
+  <p class="cta-note" id="success-msg" style="display:none;color:var(--gold);font-size:16px;">Terima kasih! Kamu sudah terdaftar. Kami akan mengirimkan artikel dan edisi kami melalui Email.</p>
+  <p class="cta-note" id="error-msg" style="display:none;color:#e07070;font-size:15px;">Ada masalah saat mendaftar. Coba lagi ya.</p>
 
   <div class="cta-freq">
     <span class="cta-freq-item">Gratis selamanya</span>
@@ -1344,44 +1525,83 @@ footer {
 </footer>
 
 <script>
-  // Nav scroll effect
   const navbar = document.getElementById('navbar');
+  const stickyBar = document.getElementById('sticky-bar');
+  let barVisible = false;
+
   window.addEventListener('scroll', () => {
-    navbar.classList.toggle('scrolled', window.scrollY > 20);
+    const scrolled = window.scrollY > 20;
+    navbar.classList.toggle('scrolled', scrolled);
+
+    // Show sticky bar after scrolling past hero
+    const heroHeight = document.querySelector('.hero').offsetHeight;
+    const shouldShow = window.scrollY > heroHeight * 0.6;
+
+    if (shouldShow && !barVisible) {
+      stickyBar.classList.add('visible');
+      navbar.style.top = '48px';
+      barVisible = true;
+    } else if (!shouldShow && barVisible) {
+      stickyBar.classList.remove('visible');
+      navbar.style.top = '0';
+      barVisible = false;
+    }
   });
 
-  // Formspree form submission
+  // Main CTA form
   const form = document.getElementById('signup-form');
   const submitBtn = document.getElementById('submit-btn');
   const successMsg = document.getElementById('success-msg');
   const errorMsg = document.getElementById('error-msg');
-  const ctaNote = document.getElementById('cta-note');
+
+  async function submitEmail(email, btn, onSuccess, onError) {
+    btn.textContent = 'Mendaftar...';
+    btn.disabled = true;
+    try {
+      const data = new FormData();
+      data.append('email', email);
+      const res = await fetch('https://formspree.io/f/mgobolpq', {
+        method: 'POST', body: data,
+        headers: { 'Accept': 'application/json' }
+      });
+      if (res.ok) { onSuccess(); } else { throw new Error(); }
+    } catch {
+      onError();
+      btn.disabled = false;
+    }
+  }
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    submitBtn.textContent = 'Mendaftar...';
-    submitBtn.disabled = true;
-
-    try {
-      const res = await fetch(form.action, {
-        method: 'POST',
-        body: new FormData(form),
-        headers: { 'Accept': 'application/json' }
-      });
-
-      if (res.ok) {
+    const email = form.querySelector('input[name="email"]').value;
+    await submitEmail(email, submitBtn,
+      () => {
         form.style.display = 'none';
-        ctaNote.style.display = 'none';
         successMsg.style.display = 'block';
         errorMsg.style.display = 'none';
-      } else {
-        throw new Error();
+      },
+      () => {
+        errorMsg.style.display = 'block';
+        submitBtn.textContent = 'Daftar Gratis →';
       }
-    } catch {
-      errorMsg.style.display = 'block';
-      submitBtn.textContent = 'Daftar Gratis →';
-      submitBtn.disabled = false;
-    }
+    );
+  });
+
+  // Sticky bar form
+  const stickyForm = document.getElementById('sticky-form');
+  const stickyBtn = document.getElementById('sticky-btn');
+  const stickySuccess = document.getElementById('sticky-success');
+
+  stickyForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = stickyForm.querySelector('input[name="email"]').value;
+    await submitEmail(email, stickyBtn,
+      () => {
+        stickyForm.style.display = 'none';
+        stickySuccess.style.display = 'block';
+      },
+      () => { stickyBtn.textContent = 'Daftar Gratis'; }
+    );
   });
 
   // Reveal on scroll
