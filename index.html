@@ -115,9 +115,12 @@ title: Sophia · Sains, Teknologi & Budaya untuk Keluarga Indonesia
     <p class="signup-kicker fade-up">Bergabung Gratis</p>
     <h2 class="signup-title fade-up fade-up-1">Belajar bersama <em>sekeluarga</em></h2>
     <p class="signup-desc fade-up fade-up-2">Daftar gratis dan akses semua artikel Sophia. Edisi majalah PDF terbit rutin langsung ke emailmu.</p>
-    <form class="signup-form signup-form-el fade-up fade-up-3" onsubmit="return false;">
-      <input class="signup-input" type="email" placeholder="Alamat emailmu" autocomplete="email">
-      <button type="submit" class="signup-btn">Daftar</button>
+    <form class="signup-form signup-form-el fade-up fade-up-3" onsubmit="return false;" style="flex-direction:column;align-items:center;gap:12px">
+      <div style="display:flex;gap:10px;width:100%;max-width:440px">
+        <input class="signup-input" type="text" placeholder="Nama kamu" id="signup-name" autocomplete="name" style="flex:1">
+        <input class="signup-input" type="email" placeholder="Alamat email" id="signup-email" autocomplete="email" style="flex:1.5">
+      </div>
+      <button type="submit" class="signup-btn" style="width:100%;max-width:440px">Daftar Gratis</button>
     </form>
   </div>
 </section>

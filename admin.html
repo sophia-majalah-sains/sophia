@@ -264,8 +264,34 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
 .toggle input:checked + .toggle-slider{background:var(--green)}
 .toggle input:checked + .toggle-slider::before{transform:translateX(20px)}
 
-/* Image upload area */
-.image-upload-area{
+/* Image list items */
+.img-list-item {
+  display:flex;align-items:center;gap:8px;
+  background:var(--cream);border:1px solid var(--border);
+  border-radius:var(--radius);padding:6px 8px;
+}
+.img-list-item.is-thumbnail {
+  border-color:var(--gold);background:rgba(197,151,58,0.06);
+}
+.img-list-thumb {
+  width:44px;height:44px;object-fit:cover;border-radius:4px;flex-shrink:0;
+}
+.img-list-info { flex:1;min-width:0; }
+.img-list-name {
+  font-size:11px;font-weight:600;color:var(--navy);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.img-list-actions { display:flex;gap:4px;flex-shrink:0; }
+.btn-img-action {
+  background:none;border:1px solid var(--border);color:var(--text-mid);
+  padding:3px 7px;border-radius:4px;font-size:10px;font-weight:600;cursor:pointer;
+  transition:all 0.15s;white-space:nowrap;
+}
+.btn-img-action:hover { border-color:var(--navy);color:var(--navy); }
+.btn-img-action.set-thumb { border-color:var(--gold);color:#8B6914; }
+.btn-img-action.is-thumb { background:var(--gold);border-color:var(--gold);color:var(--navy); }
+.btn-img-action.remove { border-color:rgba(204,51,51,0.3);color:var(--red); }
+.btn-img-action.remove:hover { background:var(--red-pale); }
   border:2px dashed var(--border-gold);border-radius:var(--radius);
   padding:20px;text-align:center;cursor:pointer;transition:all 0.2s;
   background:var(--cream);
@@ -539,6 +565,8 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
               <button class="toolbar-btn" onclick="insertMd('- ')" title="List">• List</button>
               <button class="toolbar-btn" onclick="insertMdWrap('\n---\n','')" title="Divider">—</button>
               <div class="toolbar-sep"></div>
+              <button class="toolbar-btn" onclick="openInlineImagePicker()" title="Sisipkan gambar" style="color:var(--navy);font-weight:600">🖼 Sisipkan Gambar</button>
+              <div class="toolbar-sep"></div>
               <span style="font-size:11px;color:var(--text-lighter);margin-left:4px">Format: Markdown</span>
             </div>
             <textarea class="editor-title-input" id="ed-title" placeholder="Judul artikel..." rows="2" oninput="autoResize(this)"></textarea>
@@ -611,26 +639,39 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
               </div>
             </div>
 
-            <!-- Cover image -->
+            <!-- Images -->
             <div class="sidebar-card">
-              <div class="sidebar-card-title">Gambar Cover</div>
-              <div class="image-upload-area" onclick="document.getElementById('img-upload').click()">
-                <div style="font-size:24px">🖼️</div>
+              <div class="sidebar-card-title">Gambar</div>
+              <p style="font-size:11px;color:var(--text-light);margin-bottom:12px;line-height:1.5">Upload satu atau beberapa gambar. Pilih satu sebagai thumbnail/cover. Klik "Sisipkan" untuk menaruh gambar di dalam teks.</p>
+
+              <!-- Upload area -->
+              <div class="image-upload-area" onclick="document.getElementById('img-upload-multi').click()">
+                <div style="font-size:22px">🖼️</div>
                 <p>Klik untuk upload gambar</p>
-                <p style="font-size:11px;margin-top:2px">JPG, PNG, WebP — maks 2MB</p>
+                <p style="font-size:11px;margin-top:2px">JPG, PNG, WebP — maks 2MB per file</p>
               </div>
-              <input type="file" id="img-upload" accept="image/*" style="display:none" onchange="handleImageUpload(this)">
-              <div class="image-preview" id="img-preview" style="display:none">
-                <img id="img-preview-src" src="" alt="">
-                <button class="btn-remove-img" onclick="removeImage()">✕</button>
+              <input type="file" id="img-upload-multi" accept="image/*" multiple style="display:none" onchange="handleMultiImageUpload(this)">
+
+              <!-- Or URL -->
+              <div class="field" style="margin-top:10px">
+                <label>Atau tambah dari URL</label>
+                <div style="display:flex;gap:6px">
+                  <input type="text" id="ed-img-url-input" placeholder="https://unsplash.com/..." style="flex:1;padding:8px 10px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:12px;outline:none">
+                  <button class="btn-secondary btn-sm" onclick="addImageFromUrl()">Tambah</button>
+                </div>
               </div>
-              <div class="field" style="margin-top:12px">
-                <label>Atau URL gambar</label>
-                <input type="text" id="ed-cover-url" placeholder="https://..." oninput="previewFromUrl(this.value)">
-                <span class="field-hint">Dari Unsplash, Pexels, dsb.</span>
+
+              <!-- Image list -->
+              <div id="img-list" style="margin-top:12px;display:flex;flex-direction:column;gap:8px"></div>
+
+              <!-- Thumbnail indicator -->
+              <div id="thumbnail-indicator" style="display:none;margin-top:10px;padding:8px 10px;background:var(--gold-pale,rgba(197,151,58,0.12));border-radius:var(--radius);font-size:11px;color:#8B6914;font-weight:600">
+                ✓ Thumbnail: <span id="thumbnail-name">–</span>
               </div>
-              <div class="field">
-                <label>Keterangan gambar</label>
+
+              <!-- Caption for cover -->
+              <div class="field" style="margin-top:10px">
+                <label>Keterangan gambar cover</label>
                 <input type="text" id="ed-cover-caption" placeholder="Sumber: Unsplash / nama fotografer">
               </div>
             </div>
@@ -669,8 +710,20 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
     <div class="confirm-desc" id="confirm-desc">Tindakan ini tidak bisa dibatalkan.</div>
     <div class="confirm-actions">
       <button class="btn-secondary" onclick="closeConfirm()">Batal</button>
-      <button class="btn-danger" id="confirm-ok" onclick="">Ya, hapus</button>
+      <button class="btn-danger" id="confirm-ok">Ya, lanjutkan</button>
     </div>
+  </div>
+</div>
+
+<!-- Image gallery modal -->
+<div class="confirm-overlay" id="gallery-overlay" style="z-index:400">
+  <div class="confirm-card" style="max-width:640px;width:100%;text-align:left">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div class="confirm-title" style="margin:0">Gambar di Artikel</div>
+      <button class="btn-secondary btn-sm" onclick="closeGallery()">Tutup</button>
+    </div>
+    <p style="font-size:12px;color:var(--text-light);margin-bottom:16px">Pilih gambar untuk dijadikan thumbnail / cover artikel. Klik gambar untuk menyalin markdown-nya ke editor.</p>
+    <div id="gallery-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-height:380px;overflow-y:auto"></div>
   </div>
 </div>
 
@@ -681,7 +734,7 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
 
 // ⚠️  GANTI BARIS INI (email dan password admin saja):
 const ADMIN_EMAIL    = 'sophia.hermosa.id@gmail.com';
-const ADMIN_PASSWORD = 'SophiaArmesta1322';   // ← GANTI INI
+const ADMIN_PASSWORD = 'GANTI_PASSWORD_INI';   // ← GANTI INI
 
 // Token diambil dari sessionStorage saat login — tidak ada di kode ini
 const GITHUB_OWNER  = 'sophia-majalah-sains';
@@ -708,8 +761,6 @@ function getHeaders() {
 
 let allArticles = [];       // [{name, path, sha, frontmatter, content}]
 let currentFile = null;     // file being edited {name, sha}
-let uploadedImageData = null; // base64 image
-let uploadedImageName = null;
 let rubrikFilter = null;
 
 // ══════════════════════════════════════════════════════════════
@@ -744,9 +795,16 @@ async function doLogin() {
 }
 
 function doLogout() {
-  sessionStorage.removeItem('sophia_admin');
-  sessionStorage.removeItem('sophia_gh_token');
-  location.reload();
+  showConfirm(
+    'Keluar dari Admin?',
+    'Kamu perlu memasukkan token GitHub lagi saat login berikutnya.',
+    'Keluar',
+    function() {
+      sessionStorage.removeItem('sophia_admin');
+      sessionStorage.removeItem('sophia_gh_token');
+      location.reload();
+    }
+  );
 }
 
 document.getElementById('login-password').addEventListener('keydown', e => {
@@ -948,8 +1006,7 @@ function filterByRubrik(r) {
 
 function newArticle() {
   currentFile = null;
-  uploadedImageData = null;
-  uploadedImageName = null;
+  resetImageLibrary();
   document.getElementById('editor-panel-title').textContent = 'Artikel Baru';
   document.getElementById('editor-panel-sub').textContent = 'Tulis dan terbitkan artikel';
   document.getElementById('pub-status-label').textContent = 'Draft';
@@ -964,11 +1021,8 @@ function newArticle() {
   document.getElementById('ed-read-time').value = '';
   document.getElementById('ed-featured').checked = false;
   document.getElementById('ed-slug').value = '';
-  document.getElementById('ed-cover-url').value = '';
   document.getElementById('ed-cover-caption').value = '';
   document.getElementById('slug-preview').textContent = 'slug-artikel';
-  document.getElementById('img-preview').style.display = 'none';
-  // Default date = today
   document.getElementById('ed-date').value = new Date().toISOString().slice(0,10);
 }
 
@@ -980,8 +1034,7 @@ function editArticle(filename) {
   const art = allArticles.find(a => a.name === filename);
   if (!art) return;
   currentFile = { name: art.name, sha: art.sha };
-  uploadedImageData = null;
-  uploadedImageName = null;
+  resetImageLibrary();
 
   document.getElementById('editor-panel-title').textContent = 'Edit Artikel';
   document.getElementById('editor-panel-sub').textContent = art.name;
@@ -999,7 +1052,6 @@ function editArticle(filename) {
   document.getElementById('ed-read-time').value = fm.read_time || '';
   document.getElementById('ed-featured').checked = !!fm.featured;
   document.getElementById('ed-date').value      = fm.date || new Date().toISOString().slice(0,10);
-  document.getElementById('ed-cover-url').value = fm.cover_image || '';
   document.getElementById('ed-cover-caption').value = fm.cover_caption || '';
 
   // Slug from filename
@@ -1007,13 +1059,8 @@ function editArticle(filename) {
   document.getElementById('ed-slug').value = slug;
   document.getElementById('slug-preview').textContent = slug;
 
-  // Cover preview
-  if (fm.cover_image) {
-    document.getElementById('img-preview-src').src = fm.cover_image;
-    document.getElementById('img-preview').style.display = 'block';
-  } else {
-    document.getElementById('img-preview').style.display = 'none';
-  }
+  // Load existing cover into image library
+  loadImagesFromFrontmatter(fm);
 
   switchPanel('new-article', null);
 }
@@ -1044,7 +1091,6 @@ async function saveToGitHub(isDraft) {
   const readTime = document.getElementById('ed-read-time').value.trim();
   const featured = document.getElementById('ed-featured').checked;
   const date     = document.getElementById('ed-date').value || new Date().toISOString().slice(0,10);
-  const coverUrl = document.getElementById('ed-cover-url').value.trim();
   const coverCap = document.getElementById('ed-cover-caption').value.trim();
 
   if (!title) { showToast('Judul tidak boleh kosong', 'error'); return; }
@@ -1058,18 +1104,15 @@ async function saveToGitHub(isDraft) {
   // Tags array
   const tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : [];
 
-  // Handle image upload if any
-  let finalCoverUrl = coverUrl;
-  if (uploadedImageData && uploadedImageName) {
-    showLoading('Mengupload gambar...');
-    try {
-      finalCoverUrl = await uploadImageToGitHub(uploadedImageData, uploadedImageName);
-    } catch(e) {
-      hideLoading();
-      showToast('Gagal upload gambar: ' + e.message, 'error');
-      return;
-    }
+  // Upload all local images first
+  try {
+    await uploadAllImages();
+  } catch(e) {
+    showToast(e.message, 'error');
+    return;
   }
+
+  const finalCoverUrl = getCoverImageUrl();
 
   // Build frontmatter
   const fm = {
@@ -1173,39 +1216,160 @@ async function uploadImageToGitHub(base64data, filename) {
   return `/sophia/assets/images/${filename}`;
 }
 
-function handleImageUpload(input) {
-  const file = input.files[0];
-  if (!file) return;
-  if (file.size > 2 * 1024 * 1024) { showToast('Ukuran gambar maksimal 2MB', 'error'); return; }
+// ══════════════════════════════════════════════════════════════
+// MULTI-IMAGE MANAGER
+// ══════════════════════════════════════════════════════════════
 
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    const dataUrl = e.target.result;
-    const base64  = dataUrl.split(',')[1];
-    uploadedImageData = base64;
-    uploadedImageName = Date.now() + '-' + file.name.replace(/\s+/g,'-').toLowerCase();
+// imageLibrary: [{id, name, previewUrl, base64 (if local), url (if remote), isUpload, thumbnailSlot}]
+let imageLibrary = [];
+let thumbnailId  = null;
 
-    document.getElementById('img-preview-src').src = dataUrl;
-    document.getElementById('img-preview').style.display = 'block';
-    document.getElementById('ed-cover-url').value = '(gambar lokal — akan diupload saat terbitkan)';
-  };
-  reader.readAsDataURL(file);
+function resetImageLibrary() {
+  imageLibrary = [];
+  thumbnailId  = null;
+  renderImageList();
 }
 
-function previewFromUrl(url) {
-  if (url && url.startsWith('http')) {
-    document.getElementById('img-preview-src').src = url;
-    document.getElementById('img-preview').style.display = 'block';
+function handleMultiImageUpload(input) {
+  const files = Array.from(input.files);
+  files.forEach(file => {
+    if (file.size > 2 * 1024 * 1024) { showToast(`${file.name} terlalu besar (maks 2MB)`, 'error'); return; }
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const dataUrl = e.target.result;
+      const base64  = dataUrl.split(',')[1];
+      const id      = 'img_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
+      const name    = Date.now() + '-' + file.name.replace(/\s+/g,'-').toLowerCase();
+      imageLibrary.push({ id, name, previewUrl: dataUrl, base64, isUpload: true });
+      if (!thumbnailId) { thumbnailId = id; }
+      renderImageList();
+    };
+    reader.readAsDataURL(file);
+  });
+  input.value = '';
+}
+
+function addImageFromUrl() {
+  const url = document.getElementById('ed-img-url-input').value.trim();
+  if (!url || !url.startsWith('http')) { showToast('Masukkan URL yang valid (diawali https://)', 'error'); return; }
+  const id   = 'img_' + Date.now();
+  const name = url.split('/').pop().split('?')[0] || 'image-' + Date.now() + '.jpg';
+  imageLibrary.push({ id, name, previewUrl: url, url, isUpload: false });
+  if (!thumbnailId) { thumbnailId = id; }
+  document.getElementById('ed-img-url-input').value = '';
+  renderImageList();
+}
+
+function renderImageList() {
+  const el = document.getElementById('img-list');
+  const ti = document.getElementById('thumbnail-indicator');
+  const tn = document.getElementById('thumbnail-name');
+  if (!imageLibrary.length) { el.innerHTML = ''; ti.style.display = 'none'; return; }
+
+  el.innerHTML = imageLibrary.map(img => `
+    <div class="img-list-item ${img.id === thumbnailId ? 'is-thumbnail' : ''}" id="ili_${img.id}">
+      <img class="img-list-thumb" src="${img.previewUrl}" alt="">
+      <div class="img-list-info">
+        <div class="img-list-name">${img.name}</div>
+        <div style="font-size:10px;color:var(--text-lighter)">${img.isUpload ? 'Upload lokal' : 'URL eksternal'}</div>
+      </div>
+      <div class="img-list-actions">
+        <button class="btn-img-action ${img.id === thumbnailId ? 'is-thumb' : 'set-thumb'}"
+          onclick="setThumbnail('${img.id}')">${img.id === thumbnailId ? '★ Cover' : 'Set Cover'}</button>
+        <button class="btn-img-action" onclick="insertImageToEditor('${img.id}')">Sisipkan</button>
+        <button class="btn-img-action remove" onclick="removeImageFromLibrary('${img.id}')">✕</button>
+      </div>
+    </div>`).join('');
+
+  const thumb = imageLibrary.find(i => i.id === thumbnailId);
+  if (thumb) { ti.style.display = 'block'; tn.textContent = thumb.name; }
+  else { ti.style.display = 'none'; }
+}
+
+function setThumbnail(id) {
+  thumbnailId = id;
+  renderImageList();
+}
+
+function removeImageFromLibrary(id) {
+  imageLibrary = imageLibrary.filter(i => i.id !== id);
+  if (thumbnailId === id) thumbnailId = imageLibrary.length ? imageLibrary[0].id : null;
+  renderImageList();
+}
+
+function insertImageToEditor(id) {
+  const img = imageLibrary.find(i => i.id === id);
+  if (!img) return;
+  // For local uploads, use a placeholder path that will be resolved after publish
+  const src = img.isUpload ? `/sophia/assets/images/${img.name}` : img.url;
+  const md  = `\n![Gambar](${src})\n`;
+  const ta  = document.getElementById('ed-content');
+  const pos = ta.selectionStart;
+  ta.value  = ta.value.slice(0, pos) + md + ta.value.slice(pos);
+  ta.focus();
+  ta.selectionStart = ta.selectionEnd = pos + md.length;
+  showToast('Gambar disisipkan ke teks', 'success');
+}
+
+function openInlineImagePicker() {
+  if (!imageLibrary.length) {
+    showToast('Upload gambar dulu di panel kanan sebelum menyisipkan.', 'error');
+    return;
+  }
+  const grid = document.getElementById('gallery-grid');
+  grid.innerHTML = imageLibrary.map(img => `
+    <div style="cursor:pointer;border-radius:8px;overflow:hidden;border:2px solid var(--border);transition:border-color 0.15s"
+         onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'"
+         onclick="insertImageToEditor('${img.id}');closeGallery()">
+      <img src="${img.previewUrl}" style="width:100%;aspect-ratio:4/3;object-fit:cover;display:block">
+      <div style="padding:6px 8px;font-size:10px;color:var(--text-mid);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${img.name}</div>
+    </div>`).join('');
+  document.getElementById('gallery-overlay').classList.add('show');
+}
+
+function closeGallery() {
+  document.getElementById('gallery-overlay').classList.remove('show');
+}
+
+// Upload all local images to GitHub before publishing
+async function uploadAllImages() {
+  const localImgs = imageLibrary.filter(i => i.isUpload && i.base64);
+  for (const img of localImgs) {
+    showLoading(`Mengupload ${img.name}...`);
+    try {
+      const url = await uploadImageToGitHub(img.base64, img.name);
+      img.uploadedUrl = url;
+    } catch(e) {
+      hideLoading();
+      throw new Error(`Gagal upload ${img.name}: ${e.message}`);
+    }
   }
 }
 
-function removeImage() {
-  uploadedImageData = null;
-  uploadedImageName = null;
-  document.getElementById('img-preview').style.display = 'none';
-  document.getElementById('img-preview-src').src = '';
-  document.getElementById('ed-cover-url').value = '';
-  document.getElementById('img-upload').value = '';
+// Get cover image URL (thumbnail) for frontmatter
+function getCoverImageUrl() {
+  if (!thumbnailId) return '';
+  const img = imageLibrary.find(i => i.id === thumbnailId);
+  if (!img) return '';
+  if (img.isUpload) return img.uploadedUrl || `/sophia/assets/images/${img.name}`;
+  return img.url || '';
+}
+
+// Populate image library when editing existing article
+function loadImagesFromFrontmatter(fm) {
+  resetImageLibrary();
+  if (fm.cover_image && fm.cover_image.startsWith('http')) {
+    const id = 'img_existing';
+    imageLibrary.push({ id, name: fm.cover_image.split('/').pop(), previewUrl: fm.cover_image, url: fm.cover_image, isUpload: false });
+    thumbnailId = id;
+    renderImageList();
+  } else if (fm.cover_image) {
+    const id = 'img_existing';
+    const fullUrl = fm.cover_image.startsWith('/') ? `https://sophia-majalah-sains.github.io${fm.cover_image}` : fm.cover_image;
+    imageLibrary.push({ id, name: fm.cover_image.split('/').pop(), previewUrl: fullUrl, url: fm.cover_image, isUpload: false });
+    thumbnailId = id;
+    renderImageList();
+  }
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1213,9 +1377,20 @@ function removeImage() {
 // ══════════════════════════════════════════════════════════════
 
 function confirmDelete(filename, title) {
-  document.getElementById('confirm-title').textContent = 'Hapus artikel?';
-  document.getElementById('confirm-desc').textContent = `"${title}" akan dihapus permanen dari repositori.`;
-  document.getElementById('confirm-ok').onclick = () => deleteArticle(filename);
+  showConfirm(
+    'Hapus artikel?',
+    `"${title}" akan dihapus permanen dari repositori.`,
+    'Ya, hapus',
+    () => deleteArticle(filename)
+  );
+}
+
+function showConfirm(title, desc, okLabel, onOk) {
+  document.getElementById('confirm-title').textContent = title;
+  document.getElementById('confirm-desc').textContent  = desc;
+  const btn = document.getElementById('confirm-ok');
+  btn.textContent = okLabel || 'Ya';
+  btn.onclick = function() { closeConfirm(); onOk(); };
   document.getElementById('confirm-overlay').classList.add('show');
 }
 
