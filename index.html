@@ -88,7 +88,7 @@ title: Sophia · Sains, Teknologi & Budaya untuk Keluarga Indonesia
 <section style="padding: 0 0 80px; background: var(--cream);">
   <div class="section-inner" style="padding-top: 64px;">
     <div class="section-header fade-up">
-      <h2 class="section-title">Jelajahi <span>Rubrik</span></h2>
+      <h2 class="section-title">Jelajahi <span>Kolom</span></h2>
     </div>
     <div style="display:grid; grid-template-columns: repeat(3,1fr); gap:20px;">
       {% assign rubriks = "Sains,Teknologi,Budaya,Pojok Anak,Tokoh Inspiratif,Alam & Satwa" | split: "," %}
@@ -115,12 +115,11 @@ title: Sophia · Sains, Teknologi & Budaya untuk Keluarga Indonesia
     <p class="signup-kicker fade-up">Bergabung Gratis</p>
     <h2 class="signup-title fade-up fade-up-1">Belajar bersama <em>sekeluarga</em></h2>
     <p class="signup-desc fade-up fade-up-2">Daftar gratis dan akses semua artikel Sophia. Edisi majalah PDF terbit rutin langsung ke emailmu.</p>
-    <form class="signup-form signup-form-el fade-up fade-up-3" onsubmit="return false;" style="flex-direction:column;align-items:center;gap:12px">
-      <div style="display:flex;gap:10px;width:100%;max-width:440px">
-        <input class="signup-input" type="text" placeholder="Nama kamu" id="signup-name" autocomplete="name" style="flex:1">
-        <input class="signup-input" type="email" placeholder="Alamat email" id="signup-email" autocomplete="email" style="flex:1.5">
-      </div>
-      <button type="submit" class="signup-btn" style="width:100%;max-width:440px">Daftar Gratis</button>
-    </form>
+    <div class="fade-up fade-up-3" id="signup-cta-wrap">
+      <button class="signup-btn" style="padding:14px 36px;font-size:16px;" onclick="openAuthModal('register')">
+        Daftar Sekarang — Akses Seluruh Artikel
+      </button>
+      <p id="signup-success-msg" style="display:none;color:var(--sains);font-weight:600;font-size:15px;text-align:center;margin-top:16px;"></p>
+    </div>
   </div>
 </section>

@@ -88,3 +88,33 @@
   </div>
 
 </div>
+
+<!-- PROFILE PANEL (injected by JS when user opens profile) -->
+<div class="auth-panel" id="panel-profile" style="display:none;">
+  <h2 class="auth-title">Profil Saya</h2>
+  <p class="auth-subtitle" id="profile-email-display"></p>
+  <div class="auth-form">
+    <!-- Avatar -->
+    <div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:8px">
+      <div id="profile-avatar-preview" style="width:72px;height:72px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--cream);overflow:hidden;flex-shrink:0">
+        <span id="profile-avatar-initial"></span>
+      </div>
+      <button class="btn-secondary" style="font-size:12px;padding:6px 14px" onclick="document.getElementById('avatar-upload').click()">Ganti Foto</button>
+      <input type="file" id="avatar-upload" accept="image/*" style="display:none" onchange="previewAvatar(this)">
+      <span style="font-size:11px;color:var(--text-lighter)">Maks 1MB · JPG/PNG</span>
+    </div>
+    <div class="form-group">
+      <label for="profile-name">Nama</label>
+      <input type="text" id="profile-name" placeholder="Nama kamu" autocomplete="name">
+    </div>
+    <div class="form-group">
+      <label for="profile-new-password">Password Baru <span style="font-weight:400;color:var(--text-lighter)">(kosongkan jika tidak diubah)</span></label>
+      <input type="password" id="profile-new-password" placeholder="Minimal 6 karakter" autocomplete="new-password">
+    </div>
+    <p class="auth-error" id="profile-error"></p>
+    <button class="btn-auth-submit" id="profile-save-btn" onclick="handleSaveProfile()">Simpan Perubahan</button>
+  </div>
+  <p class="auth-switch" style="margin-top:12px">
+    <a href="#" onclick="switchPanel('delete-confirm'); return false;" style="color:#CC3333;font-size:12px">Hapus akun saya</a>
+  </p>
+</div>

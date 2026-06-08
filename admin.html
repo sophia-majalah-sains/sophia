@@ -420,12 +420,7 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
     <div class="form-group">
       <label>GitHub Token</label>
       <input type="password" id="login-token" placeholder="ghp_..." autocomplete="off">
-      <span style="font-size:11px;color:#9AA5BE;margin-top:4px;display:block">Token tidak tersimpan di kode. Hanya di memori sesi ini.</span>
-    </div>
-    <div class="form-group">
-      <label>Admin Secret</label>
-      <input type="password" id="login-admin-secret" placeholder="Secret yang kamu set di Supabase" autocomplete="off">
-      <span style="font-size:11px;color:#9AA5BE;margin-top:4px;display:block">Untuk akses panel Subscribers.</span>
+      <span style="font-size:11px;color:#9AA5BE;margin-top:4px;display:block">Hanya tersimpan di memori sesi ini.</span>
     </div>
     <p class="login-error" id="login-error"></p>
     <button class="btn-login" onclick="doLogin()">Masuk</button>
@@ -471,7 +466,7 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
       </div>
       <div class="sidebar-divider"></div>
       <div class="sidebar-section">
-        <div class="sidebar-label">Rubrik</div>
+        <div class="sidebar-label">Kolom</div>
         <button class="sidebar-link" onclick="filterByRubrik('Sains')"><span class="rubrik-dot dot-sains"></span>Sains</button>
         <button class="sidebar-link" onclick="filterByRubrik('Teknologi')"><span class="rubrik-dot dot-teknologi"></span>Teknologi</button>
         <button class="sidebar-link" onclick="filterByRubrik('Budaya')"><span class="rubrik-dot dot-budaya"></span>Budaya</button>
@@ -595,7 +590,7 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
             <div class="sidebar-card">
               <div class="sidebar-card-title">Pengaturan Artikel</div>
               <div class="field">
-                <label>Rubrik</label>
+                <label>Kolom</label>
                 <select id="ed-rubrik">
                   <option value="Cover Story">Cover Story</option>
                   <option value="Sains">Sains</option>
@@ -760,11 +755,7 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
 // CONFIG
 // ══════════════════════════════════════════════════════════════
 
-// ⚠️  GANTI BARIS INI (email dan password admin saja):
-const ADMIN_EMAIL    = 'sophia.hermosa.id@gmail.com';
-const ADMIN_PASSWORD = 'GANTI_PASSWORD_INI';   // ← GANTI INI
-
-// Token diambil dari sessionStorage saat login — tidak ada di kode ini
+// No credentials stored here — all verified server-side
 const GITHUB_OWNER  = 'sophia-majalah-sains';
 const GITHUB_REPO   = 'sophia';
 const GITHUB_BRANCH = 'main';
@@ -781,14 +772,12 @@ function getHeaders() {
   };
 }
 
-// (HEADERS alias removed — all fetches use getHeaders() directly)
-
 // ══════════════════════════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════════════════════════
 
-let allArticles = [];       // [{name, path, sha, frontmatter, content}]
-let currentFile = null;     // file being edited {name, sha}
+let allArticles = [];
+let currentFile = null;
 let rubrikFilter = null;
 
 // ══════════════════════════════════════════════════════════════
@@ -798,28 +787,52 @@ let rubrikFilter = null;
 async function doLogin() {
   const email = document.getElementById('login-email').value.trim();
   const pass  = document.getElementById('login-password').value;
-  const token       = document.getElementById('login-token').value.trim();
-  const adminSecret = document.getElementById('login-admin-secret').value.trim();
-  const err         = document.getElementById('login-error');
+  const token = document.getElementById('login-token').value.trim();
+  const err   = document.getElementById('login-error');
+  const btn   = document.querySelector('.btn-login');
 
-  if (email !== ADMIN_EMAIL)    { err.textContent = 'Email tidak dikenali.'; return; }
-  if (pass  !== ADMIN_PASSWORD) { err.textContent = 'Password salah.'; return; }
+  if (!email || !pass)  { err.textContent = 'Email dan password wajib diisi.'; return; }
   if (!token || !token.startsWith('ghp_')) { err.textContent = 'GitHub token tidak valid. Harus diawali ghp_'; return; }
 
-  err.textContent = 'Memverifikasi token...';
+  btn.disabled = true;
+  err.textContent = 'Memverifikasi...';
+
+  // Step 1: Verify admin credentials via Edge Function
+  try {
+    const authRes = await fetch(`${EDGE_FN_URL}?action=admin-login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY },
+      body: JSON.stringify({ email, password: pass })
+    });
+    const authData = await authRes.json();
+    if (!authRes.ok || authData.error) {
+      err.textContent = authData.error || 'Login gagal.';
+      btn.disabled = false;
+      return;
+    }
+    // Store the admin secret returned from server
+    sessionStorage.setItem('sophia_admin_secret', authData.token);
+  } catch(e) {
+    err.textContent = 'Gagal menghubungi server. Periksa koneksi internet.';
+    btn.disabled = false;
+    return;
+  }
+
+  // Step 2: Verify GitHub token
+  err.textContent = 'Memverifikasi GitHub token...';
   try {
     const test = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}`, {
       headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }
     });
-    if (!test.ok) { err.textContent = 'Token GitHub tidak valid atau tidak punya akses ke repo ini.'; return; }
-  } catch(e) { err.textContent = 'Gagal verifikasi token. Periksa koneksi internet.'; return; }
+    if (!test.ok) { err.textContent = 'Token GitHub tidak valid.'; btn.disabled = false; return; }
+  } catch(e) { err.textContent = 'Gagal verifikasi GitHub token.'; btn.disabled = false; return; }
 
   sessionStorage.setItem('sophia_admin', '1');
   sessionStorage.setItem('sophia_gh_token', token);
-  if (adminSecret) sessionStorage.setItem('sophia_admin_secret', adminSecret);
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').style.display = 'flex';
   document.getElementById('topbar-user').textContent = email;
+  btn.disabled = false;
   init();
 }
 
@@ -856,7 +869,7 @@ if (sessionStorage.getItem('sophia_admin') && sessionStorage.getItem('sophia_gh_
 const SUPABASE_URL = 'https://ayhxgiacqthxalvrezxy.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_IqdChXiwuHG_svXN2mqK4A_a6WgP_Qr';
 const EDGE_FN_URL  = 'https://ayhxgiacqthxalvrezxy.supabase.co/functions/v1/admin-users';
-// Admin secret entered at login — never stored in code
+// No credentials stored here — verified server-side via Edge Function
 function getAdminSecret() { return sessionStorage.getItem('sophia_admin_secret') || ''; }
 
 let allSubscribers = [];
@@ -1117,7 +1130,7 @@ function renderArticlesList(filter) {
 function renderTableHTML(list) {
   return `<table class="articles-table">
     <thead><tr>
-      <th>Artikel</th><th>Rubrik</th><th>Akses</th><th>Tanggal</th><th>Edisi</th><th>Aksi</th>
+      <th>Artikel</th><th>Kolom</th><th>Akses</th><th>Tanggal</th><th>Edisi</th><th>Aksi</th>
     </tr></thead>
     <tbody>${list.map(a => `
       <tr>
@@ -1142,7 +1155,7 @@ function renderTableHTML(list) {
 
 function updateSubtitle() {
   const el = document.getElementById('articles-subtitle');
-  if (el) el.textContent = `${allArticles.length} artikel · ${rubrikFilter||'Semua rubrik'}`;
+  if (el) el.textContent = `${allArticles.length} artikel · ${rubrikFilter||'Semua kolom'}`;
 }
 
 function filterArticles(q) { renderArticlesList(q); }

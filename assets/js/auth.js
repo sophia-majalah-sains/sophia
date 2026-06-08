@@ -316,7 +316,14 @@ function updateNavAuth(user) {
     var name = (user.user_metadata && user.user_metadata.name) || user.email.split('@')[0];
     var firstName = name.split(' ')[0];
     if (nameEl)   nameEl.textContent   = firstName;
-    if (avatarEl) avatarEl.textContent = firstName.charAt(0).toUpperCase();
+    if (avatarEl) {
+      var savedAvatar = localStorage.getItem('sophia_avatar_' + user.id);
+      if (savedAvatar) {
+        avatarEl.innerHTML = '<img src="' + savedAvatar + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
+      } else {
+        avatarEl.textContent = firstName.charAt(0).toUpperCase();
+      }
+    }
     if (emailEl)  emailEl.textContent  = user.email;
   } else {
     guestEl.style.display = 'flex';
@@ -397,3 +404,103 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
   }
 });
+
+// ---- Profile ----
+
+// Rate limiting: max 1 profile update per 60 seconds
+var _lastProfileUpdate = 0;
+var _lastAvatarData = null;
+
+function openProfile() {
+  var user = getCurrentUser();
+  if (!user) { openAuthModal('login'); return; }
+  var name = (user.user_metadata && user.user_metadata.name) || '';
+  var email = user.email || '';
+  document.getElementById('profile-name').value = name;
+  document.getElementById('profile-new-password').value = '';
+  document.getElementById('profile-email-display').textContent = email;
+  document.getElementById('profile-error').textContent = '';
+  document.getElementById('profile-avatar-initial').textContent = name.charAt(0).toUpperCase();
+  // Load saved avatar
+  var savedAvatar = localStorage.getItem('sophia_avatar_' + user.id);
+  if (savedAvatar) {
+    document.getElementById('profile-avatar-preview').innerHTML = '<img src="' + savedAvatar + '" style="width:100%;height:100%;object-fit:cover">';
+  }
+  _lastAvatarData = null;
+  openAuthModal('profile');
+}
+
+function previewAvatar(input) {
+  var file = input.files[0];
+  if (!file) return;
+  if (file.size > 1024 * 1024) {
+    document.getElementById('profile-error').textContent = 'Ukuran foto maksimal 1MB.';
+    return;
+  }
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    _lastAvatarData = e.target.result;
+    document.getElementById('profile-avatar-preview').innerHTML = '<img src="' + e.target.result + '" style="width:100%;height:100%;object-fit:cover">';
+  };
+  reader.readAsDataURL(file);
+}
+
+async function handleSaveProfile() {
+  var now = Date.now();
+  if (now - _lastProfileUpdate < 60000) {
+    var wait = Math.ceil((60000 - (now - _lastProfileUpdate)) / 1000);
+    document.getElementById('profile-error').textContent = 'Tunggu ' + wait + ' detik sebelum mengubah profil lagi.';
+    return;
+  }
+
+  var name     = document.getElementById('profile-name').value.trim();
+  var password = document.getElementById('profile-new-password').value.trim();
+  var errEl    = document.getElementById('profile-error');
+  var btn      = document.getElementById('profile-save-btn');
+
+  if (!name) { errEl.textContent = 'Nama tidak boleh kosong.'; return; }
+  if (password && password.length < 6) { errEl.textContent = 'Password minimal 6 karakter.'; return; }
+
+  setLoading(btn, true, 'Menyimpan...');
+
+  try {
+    var body = { data: { name: name } };
+    if (password) body.password = password;
+
+    var res = await fetch(AUTH_ENDPOINT + '/user', {
+      method: 'PUT',
+      headers: sbHeaders(true),
+      body: JSON.stringify(body)
+    });
+    var data = await res.json();
+
+    if (data.error) {
+      errEl.textContent = data.error.message || 'Gagal menyimpan.';
+      setLoading(btn, false, 'Simpan Perubahan');
+      return;
+    }
+
+    // Save avatar locally (Supabase free tier has no storage)
+    var user = getCurrentUser();
+    if (_lastAvatarData && user) {
+      localStorage.setItem('sophia_avatar_' + user.id, _lastAvatarData);
+    }
+
+    // Update session
+    saveSession(data);
+    updateNavAuth(data);
+    _lastProfileUpdate = Date.now();
+
+    errEl.style.color = 'var(--sains)';
+    errEl.textContent = 'Profil berhasil disimpan!';
+    setTimeout(function() {
+      errEl.style.color = '';
+      errEl.textContent = '';
+      closeAuthModal();
+    }, 1500);
+  } catch(e) {
+    errEl.textContent = 'Terjadi kesalahan. Coba lagi.';
+  }
+
+  setLoading(btn, false, 'Simpan Perubahan');
+}
