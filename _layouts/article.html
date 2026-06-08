@@ -23,7 +23,11 @@ layout: default
 
   {% if page.cover_image %}
   <div class="article-cover">
+    {% if page.cover_image contains 'http' %}
+    <img src="{{ page.cover_image }}" alt="{{ page.title }}">
+    {% else %}
     <img src="{{ page.cover_image | relative_url }}" alt="{{ page.title }}">
+    {% endif %}
     {% if page.cover_caption %}<p class="cover-caption">{{ page.cover_caption }}</p>{% endif %}
   </div>
   {% endif %}

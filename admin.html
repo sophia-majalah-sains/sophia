@@ -1377,10 +1377,12 @@ async function uploadImageToGitHub(base64data, filename) {
 
   if (!res.ok) {
     const e = await res.json();
-    throw new Error(e.message);
+    throw new Error(e.message || 'Upload gambar gagal');
   }
 
-  return `/sophia/assets/images/${filename}`;
+  const data = await res.json();
+  // Return the absolute URL using the download URL from GitHub API
+  return `https://sophia-majalah-sains.github.io/sophia/assets/images/${filename}`;
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1467,9 +1469,12 @@ function removeImageFromLibrary(id) {
 function insertImageToEditor(id) {
   const img = imageLibrary.find(i => i.id === id);
   if (!img) return;
-  // For local uploads, use a placeholder path that will be resolved after publish
-  const src = img.isUpload ? `/sophia/assets/images/${img.name}` : img.url;
-  const md  = `\n![Gambar](${src})\n`;
+  // Use full absolute URL so markdown renders correctly on GitHub Pages
+  const base = 'https://sophia-majalah-sains.github.io';
+  const src = img.isUpload
+    ? (img.uploadedUrl ? base + img.uploadedUrl : base + `/sophia/assets/images/${img.name}`)
+    : img.url;
+  const md  = `\n![](${src})\n`;
   const ta  = document.getElementById('ed-content');
   const pos = ta.selectionStart;
   ta.value  = ta.value.slice(0, pos) + md + ta.value.slice(pos);
@@ -1513,12 +1518,12 @@ async function uploadAllImages() {
   }
 }
 
-// Get cover image URL (thumbnail) for frontmatter
 function getCoverImageUrl() {
   if (!thumbnailId) return '';
   const img = imageLibrary.find(i => i.id === thumbnailId);
   if (!img) return '';
-  if (img.isUpload) return img.uploadedUrl || `/sophia/assets/images/${img.name}`;
+  const base = 'https://sophia-majalah-sains.github.io';
+  if (img.isUpload) return img.uploadedUrl || (base + `/sophia/assets/images/${img.name}`);
   return img.url || '';
 }
 
