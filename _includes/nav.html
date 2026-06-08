@@ -19,6 +19,17 @@
       <a href="{{ '/tentang' | relative_url }}" class="nav-link {% if page.url contains '/tentang' %}active{% endif %}">Tentang</a>
     </div>
 
+    <div class="nav-search-wrap" id="nav-search-wrap">
+      <button class="nav-search-btn" onclick="toggleNavSearch()" aria-label="Cari">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      </button>
+      <div class="nav-search-box" id="nav-search-box" style="display:none;">
+        <input type="text" id="nav-search-input" class="nav-search-input" placeholder="Cari artikel..." autocomplete="off"
+          oninput="handleNavSearch(this.value)" onkeydown="if(event.key==='Escape')toggleNavSearch()">
+        <div class="nav-search-results" id="nav-search-results"></div>
+      </div>
+    </div>
+
     <div class="nav-actions">
       <div id="nav-auth-guest" class="nav-auth-guest">
         <button class="btn-nav-login" onclick="openAuthModal('login')">Log In</button>

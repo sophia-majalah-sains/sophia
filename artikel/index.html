@@ -16,6 +16,17 @@ permalink: /artikel/
   <div class="articles-listing">
     <div class="section-inner">
 
+      <!-- Search + Kolom filters -->
+      <div class="artikel-search-bar fade-up" style="margin-bottom:20px;">
+        <div style="position:relative;">
+          <svg style="position:absolute;left:14px;top:50%;transform:translateY(-50%);opacity:0.4;pointer-events:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="artikel-search-input" class="search-input"
+            style="padding-left:40px;width:100%;max-width:400px"
+            placeholder="Cari artikel..." autocomplete="off"
+            oninput="filterArticlesBySearch(this.value)">
+        </div>
+      </div>
+
       <!-- Kolom filters -->
       <div class="rubrik-filters fade-up">
         <button class="rubrik-filter active" data-filter="semua">Semua</button>
@@ -24,7 +35,7 @@ permalink: /artikel/
         <button class="rubrik-filter" data-filter="budaya">Budaya</button>
         <button class="rubrik-filter" data-filter="pojok-anak">Pojok Anak</button>
         <button class="rubrik-filter" data-filter="tokoh-inspiratif">Tokoh Inspiratif</button>
-        <button class="rubrik-filter" data-filter="alam-satwa">Alam & Satwa</button>
+        <button class="rubrik-filter" data-filter="alam-satwa">Alam &amp; Satwa</button>
         <button class="rubrik-filter" data-filter="cover-story">Cover Story</button>
       </div>
 

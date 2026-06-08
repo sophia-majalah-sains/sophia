@@ -291,12 +291,28 @@ function onLoginSuccess(user, message) {
   if (msgEl) msgEl.textContent = message || 'Kamu sudah masuk ke Sophia.';
   switchPanel('success');
 
-  setTimeout(function() {
-    closeAuthModal();
-    if (document.getElementById('article-paywall')) {
-      window.location.reload();
+  // 5 second countdown then auto-close
+  var count = 5;
+  var countEl = document.getElementById('success-countdown');
+  if (countEl) countEl.textContent = 'Menutup otomatis dalam ' + count + ' detik...';
+
+  var timer = setInterval(function() {
+    count--;
+    if (countEl) {
+      if (count > 0) {
+        countEl.textContent = 'Menutup otomatis dalam ' + count + ' detik...';
+      } else {
+        countEl.textContent = '';
+      }
     }
-  }, 1800);
+    if (count <= 0) {
+      clearInterval(timer);
+      closeAuthModal();
+      if (document.getElementById('article-paywall')) {
+        window.location.reload();
+      }
+    }
+  }, 1000);
 }
 
 // ---- Nav state ----

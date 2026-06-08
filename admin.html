@@ -653,12 +653,12 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
               <p style="font-size:11px;color:var(--text-light);margin-bottom:12px;line-height:1.5">Upload satu atau beberapa gambar. Pilih satu sebagai thumbnail/cover. Klik "Sisipkan" untuk menaruh gambar di dalam teks.</p>
 
               <!-- Upload area -->
-              <div class="image-upload-area" onclick="document.getElementById('img-upload-multi').click()">
+              <label for="img-upload-multi" class="image-upload-area" style="cursor:pointer;display:block;">
                 <div style="font-size:22px">🖼️</div>
                 <p>Klik untuk upload gambar</p>
-                <p style="font-size:11px;margin-top:2px">JPG, PNG, WebP — maks 2MB per file</p>
-              </div>
-              <input type="file" id="img-upload-multi" accept="image/*" multiple style="display:none" onchange="handleMultiImageUpload(this)">
+                <p style="font-size:11px;margin-top:2px">JPG, PNG, WebP, maks 2MB per file</p>
+              </label>
+              <input type="file" id="img-upload-multi" accept="image/jpeg,image/png,image/webp" multiple style="display:none" onchange="handleMultiImageUpload(this)">
 
               <!-- Or URL -->
               <div class="field" style="margin-top:10px">

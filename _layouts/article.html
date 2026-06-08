@@ -110,15 +110,16 @@ layout: default
 
 <script>
 (function() {
-  var url  = encodeURIComponent(window.location.href);
-  var text = encodeURIComponent('Baca artikel menarik dari Sophia: ' + document.title + ' ' + window.location.href);
-  var wa = document.getElementById('share-wa');
-  var ig = document.getElementById('share-instagram');
-  var tw = document.getElementById('share-twitter');
-  var tg = document.getElementById('share-telegram');
-  if (wa) wa.href = 'https://wa.me/?text=' + text;
-  if (tw) tw.href = 'https://twitter.com/intent/tweet?url=' + url + '&text=' + encodeURIComponent('Baca artikel menarik dari Sophia: ' + document.title);
-  if (tg) tg.href = 'https://t.me/share/url?url=' + url + '&text=' + encodeURIComponent('Baca artikel menarik dari Sophia: ' + document.title);
+  var pageTitle = document.title.replace(' — Sophia', '').replace(' - Sophia', '');
+  var pageUrl   = window.location.href;
+  var url  = encodeURIComponent(pageUrl);
+  var waText  = encodeURIComponent('Hai! Saya baru baca artikel menarik dari Sophia berjudul "' + pageTitle + '". Yuk baca juga, keren banget! ' + pageUrl);
+  var twText  = encodeURIComponent('Baru baca artikel ini dari Sophia dan sangat menarik. "' + pageTitle + '" ' + pageUrl + ' via @SophiaMajalah');
+  var tgText  = encodeURIComponent('Artikel ini dari Sophia layak banget untuk dibaca. "' + pageTitle + '" ' + pageUrl);
+
+  if (wa) wa.href = 'https://wa.me/?text=' + waText;
+  if (tw) tw.href = 'https://twitter.com/intent/tweet?text=' + twText;
+  if (tg) tg.href = 'https://t.me/share/url?url=' + url + '&text=' + tgText;
   if (ig) ig.onclick = function(e) {
     e.preventDefault();
     navigator.clipboard.writeText(window.location.href).then(function() {

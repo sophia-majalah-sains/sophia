@@ -15,7 +15,66 @@
   }, { passive: true });
 })();
 
-// ---- User dropdown ----
+// ---- Nav Search ----
+var _searchIndex = null;
+var _searchOpen = false;
+
+async function loadSearchIndex() {
+  if (_searchIndex) return;
+  try {
+    var base = document.querySelector('base') ? document.querySelector('base').href : '';
+    var res = await fetch('/sophia/search-index.json');
+    if (res.ok) _searchIndex = await res.json();
+  } catch(e) { _searchIndex = []; }
+}
+
+function toggleNavSearch() {
+  _searchOpen = !_searchOpen;
+  var box = document.getElementById('nav-search-box');
+  if (!box) return;
+  box.style.display = _searchOpen ? 'block' : 'none';
+  if (_searchOpen) {
+    loadSearchIndex();
+    setTimeout(function() {
+      var inp = document.getElementById('nav-search-input');
+      if (inp) inp.focus();
+    }, 50);
+  }
+}
+
+function handleNavSearch(q) {
+  var results = document.getElementById('nav-search-results');
+  if (!results) return;
+  q = (q || '').trim().toLowerCase();
+  if (!q || !_searchIndex) { results.innerHTML = ''; return; }
+
+  var matches = _searchIndex.filter(function(a) {
+    return (a.title || '').toLowerCase().includes(q) ||
+           (a.excerpt || '').toLowerCase().includes(q) ||
+           (a.rubrik || '').toLowerCase().includes(q);
+  }).slice(0, 6);
+
+  if (!matches.length) {
+    results.innerHTML = '<div class="search-empty">Tidak ada hasil untuk "' + q + '"</div>';
+    return;
+  }
+
+  results.innerHTML = matches.map(function(a) {
+    return '<a class="nav-search-result" href="' + a.url + '" onclick="toggleNavSearch()">' +
+      '<span class="search-result-rubrik">' + (a.rubrik || '') + '</span>' +
+      '<span class="search-result-title">' + (a.title || '') + '</span>' +
+      '<span class="search-result-excerpt">' + (a.excerpt || '') + '</span>' +
+      '</a>';
+  }).join('');
+}
+
+// Close search on outside click
+document.addEventListener('click', function(e) {
+  var wrap = document.getElementById('nav-search-wrap');
+  if (wrap && !wrap.contains(e.target) && _searchOpen) toggleNavSearch();
+});
+
+
 function toggleUserDropdown() {
   var menu = document.getElementById('nav-user-menu');
   if (!menu) return;
@@ -49,29 +108,36 @@ document.addEventListener('click', function(e) {
   }
 });
 
-// ---- Rubrik filter (articles listing page) ----
+// ---- Artikel page search (works with rubrik filter) ----
+var _activeRubrik = 'semua';
+var _activeSearch = '';
+
+function filterArticlesBySearch(q) {
+  _activeSearch = (q || '').trim().toLowerCase();
+  applyArticleFilters();
+}
+
+function applyArticleFilters() {
+  var cards = document.querySelectorAll('.article-card[data-rubrik]');
+  cards.forEach(function(card) {
+    var rubrikMatch = _activeRubrik === 'semua' || card.getAttribute('data-rubrik') === _activeRubrik;
+    var text = (card.textContent || '').toLowerCase();
+    var searchMatch = !_activeSearch || text.includes(_activeSearch);
+    card.style.display = (rubrikMatch && searchMatch) ? '' : 'none';
+  });
+}
+
+
 document.addEventListener('DOMContentLoaded', function() {
   var filters = document.querySelectorAll('.rubrik-filter');
-  var cards   = document.querySelectorAll('.article-card[data-rubrik]');
-
   if (!filters.length) return;
 
   filters.forEach(function(btn) {
     btn.addEventListener('click', function() {
-      var rubrik = btn.getAttribute('data-filter');
-
-      // Update active state
+      _activeRubrik = btn.getAttribute('data-filter');
       filters.forEach(function(f) { f.classList.remove('active'); });
       btn.classList.add('active');
-
-      // Filter cards
-      cards.forEach(function(card) {
-        if (rubrik === 'semua' || card.getAttribute('data-rubrik') === rubrik) {
-          card.style.display = '';
-        } else {
-          card.style.display = 'none';
-        }
-      });
+      applyArticleFilters();
     });
   });
 
