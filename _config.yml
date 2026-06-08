@@ -1,0 +1,34 @@
+title: Sophia
+description: Majalah digital sains, teknologi, dan budaya untuk keluarga Indonesia
+baseurl: "/sophia"
+url: "https://sophia-majalah-sains.github.io"
+
+tagline: "Rasa Ingin Tahu, Awal Pembelajaran"
+email: sophia.hermosa.id@gmail.com
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+permalink: /artikel/:slug/
+
+collections:
+  articles:
+    output: true
+    permalink: /artikel/:slug/
+
+defaults:
+  - scope:
+      path: ""
+      type: articles
+    values:
+      layout: article
+
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - README.md

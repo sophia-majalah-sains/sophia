@@ -1,0 +1,82 @@
+---
+layout: default
+---
+
+<article class="article-page">
+
+  <header class="article-header" data-rubrik="{{ page.rubrik | downcase | replace: ' ', '-' }}">
+    <div class="article-header-inner">
+      <div class="article-meta-top">
+        <span class="rubrik-badge rubrik-{{ page.rubrik | downcase | replace: ' ', '-' }}">{{ page.rubrik }}</span>
+        {% if page.edisi %}<span class="edisi-tag">Edisi {{ page.edisi }}</span>{% endif %}
+      </div>
+      <h1 class="article-title">{{ page.title }}</h1>
+      {% if page.subtitle %}<p class="article-subtitle">{{ page.subtitle }}</p>{% endif %}
+      <div class="article-byline">
+        <span class="byline-author">Redaksi Sophia</span>
+        <span class="byline-sep">·</span>
+        <time class="byline-date">{{ page.date | date: "%-d %B %Y" }}</time>
+        {% if page.read_time %}<span class="byline-sep">·</span><span class="byline-read">{{ page.read_time }} menit baca</span>{% endif %}
+      </div>
+    </div>
+  </header>
+
+  {% if page.cover_image %}
+  <div class="article-cover">
+    <img src="{{ page.cover_image | relative_url }}" alt="{{ page.title }}">
+    {% if page.cover_caption %}<p class="cover-caption">{{ page.cover_caption }}</p>{% endif %}
+  </div>
+  {% endif %}
+
+  <div class="article-body-wrap">
+
+    {% if page.access == "members" %}
+      <!-- Show teaser paragraphs freely, rest behind login wall -->
+      <div class="article-content article-teaser" id="article-content">
+        {{ content }}
+      </div>
+      <div class="article-paywall" id="article-paywall">
+        <div class="paywall-blur"></div>
+        <div class="paywall-card">
+          <div class="paywall-icon">S</div>
+          <h2 class="paywall-title">Lanjutkan membaca di Sophia</h2>
+          <p class="paywall-desc">Artikel ini khusus untuk anggota terdaftar. Daftar gratis untuk mengakses seluruh konten Sophia.</p>
+          <div class="paywall-actions">
+            <button class="btn-paywall-login" onclick="openAuthModal('login')">Log In</button>
+            <button class="btn-paywall-register" onclick="openAuthModal('register')">Daftar Gratis</button>
+          </div>
+          <p class="paywall-note">Sudah punya akun? <a href="#" onclick="openAuthModal('login'); return false;">Masuk di sini</a></p>
+        </div>
+      </div>
+    {% else %}
+      <div class="article-content" id="article-content">
+        {{ content }}
+      </div>
+    {% endif %}
+
+  </div>
+
+  <footer class="article-footer">
+    <div class="article-tags">
+      {% for tag in page.tags %}
+      <span class="article-tag">#{{ tag }}</span>
+      {% endfor %}
+    </div>
+    <div class="article-nav-links">
+      <a href="{{ '/artikel' | relative_url }}" class="back-to-articles">← Semua Artikel</a>
+    </div>
+  </footer>
+
+</article>
+
+{% if page.access == "members" %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const user = getCurrentUser();
+    if (user) {
+      document.getElementById('article-paywall').style.display = 'none';
+      document.getElementById('article-content').classList.remove('article-teaser');
+    }
+  });
+</script>
+{% endif %}

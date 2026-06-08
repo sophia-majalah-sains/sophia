@@ -1,0 +1,70 @@
+---
+layout: default
+title: Semua Artikel
+permalink: /artikel/
+---
+
+<div class="articles-page">
+
+  <div class="articles-page-header">
+    <div class="section-inner">
+      <h1 class="fade-up">Semua Artikel</h1>
+      <p class="fade-up fade-up-1">Sains, teknologi, dan budaya untuk keluarga Indonesia</p>
+    </div>
+  </div>
+
+  <div class="articles-listing">
+    <div class="section-inner">
+
+      <!-- Rubrik filters -->
+      <div class="rubrik-filters fade-up">
+        <button class="rubrik-filter active" data-filter="semua">Semua</button>
+        <button class="rubrik-filter" data-filter="sains">Sains</button>
+        <button class="rubrik-filter" data-filter="teknologi">Teknologi</button>
+        <button class="rubrik-filter" data-filter="budaya">Budaya</button>
+        <button class="rubrik-filter" data-filter="pojok-anak">Pojok Anak</button>
+        <button class="rubrik-filter" data-filter="tokoh-inspiratif">Tokoh Inspiratif</button>
+        <button class="rubrik-filter" data-filter="alam-satwa">Alam & Satwa</button>
+        <button class="rubrik-filter" data-filter="cover-story">Cover Story</button>
+      </div>
+
+      <!-- Article grid -->
+      <div class="articles-grid">
+        {% assign all_articles = site.articles | sort: "date" | reverse %}
+        {% for article in all_articles %}
+        <a href="{{ article.url | relative_url }}" class="article-card fade-up"
+           data-rubrik="{{ article.rubrik | downcase | replace: ' ', '-' | replace: '&', '' | replace: '--', '-' }}">
+          <div class="card-img">
+            {% if article.cover_image %}
+            <img src="{{ article.cover_image | relative_url }}" alt="{{ article.title }}" loading="lazy">
+            {% else %}
+            <div class="card-img-placeholder">{{ article.rubrik | slice: 0 }}</div>
+            {% endif %}
+            {% if article.access == "members" %}
+            <span class="card-members-badge">Anggota</span>
+            {% endif %}
+          </div>
+          <div class="card-body">
+            <span class="card-rubrik rubrik-{{ article.rubrik | downcase | replace: ' ', '-' | replace: '&', '' | replace: '--', '-' }}">{{ article.rubrik }}</span>
+            <h2 class="card-title">{{ article.title }}</h2>
+            <p class="card-excerpt">{{ article.excerpt | strip_html | truncate: 140 }}</p>
+            <div class="card-meta">
+              <time>{{ article.date | date: "%-d %b %Y" }}</time>
+              {% if article.read_time %}
+              <span class="card-meta-sep">·</span>
+              <span>{{ article.read_time }} menit</span>
+              {% endif %}
+              {% if article.edisi %}
+              <span class="card-meta-sep">·</span>
+              <span>Edisi {{ article.edisi }}</span>
+              {% endif %}
+            </div>
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+
+    </div>
+  </div>
+
+</div>
