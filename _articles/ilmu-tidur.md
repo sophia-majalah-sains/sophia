@@ -1,7 +1,7 @@
 ---
 layout: article
 title: "Mengapa Kita Harus Tidur?"
-subtitle: "Ilmu di balik sesuatu yang kita lakukan sepertiga hidup kita"
+subtitle: Ilmu di balik sesuatu yang kita lakukan sepertiga hidup kita
 rubrik: Sains
 date: 2026-03-10
 edisi: 2
@@ -9,8 +9,10 @@ read_time: 7
 access: members
 tags: [tidur, otak, kesehatan, sains]
 excerpt: "Kita menghabiskan sepertiga hidup untuk tidur. Tapi mengapa? Jawabannya jauh lebih menakjubkan dari sekadar 'supaya tidak mengantuk'."
+cover_image: /sophia/assets/images/1780931458367-pexels-ron-lach-8086364.jpg
 ---
 
+![Gambar](/sophia/assets/images/1780931458367-pexels-ron-lach-8086364.jpg)
 Kita menghabiskan sepertiga hidup untuk tidur. Tapi mengapa? Jawabannya jauh lebih menakjubkan dari sekadar "supaya tidak mengantuk."
 
 Selama bertahun-tahun, para ilmuwan menganggap tidur adalah waktu istirahat pasif bagi tubuh dan otak. Kini kita tahu sebaliknya: tidur adalah salah satu proses paling aktif dan penting yang terjadi di dalam tubuh kita.
