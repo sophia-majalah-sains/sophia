@@ -12,7 +12,6 @@ excerpt: "Kita menghabiskan sepertiga hidup untuk tidur. Tapi mengapa? Jawabanny
 cover_image: /sophia/assets/images/1780931458367-pexels-ron-lach-8086364.jpg
 ---
 
-![Gambar](/sophia/assets/images/1780931458367-pexels-ron-lach-8086364.jpg)
 Kita menghabiskan sepertiga hidup untuk tidur. Tapi mengapa? Jawabannya jauh lebih menakjubkan dari sekadar "supaya tidak mengantuk."
 
 Selama bertahun-tahun, para ilmuwan menganggap tidur adalah waktu istirahat pasif bagi tubuh dan otak. Kini kita tahu sebaliknya: tidur adalah salah satu proses paling aktif dan penting yang terjadi di dalam tubuh kita.
