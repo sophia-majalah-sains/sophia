@@ -25,8 +25,19 @@
         <button class="btn-nav-register" onclick="openAuthModal('register')">Daftar</button>
       </div>
       <div id="nav-auth-user" class="nav-auth-user" style="display:none;">
-        <span class="nav-user-name" id="nav-user-name"></span>
-        <button class="btn-nav-logout" onclick="logoutUser()">Keluar</button>
+        <div class="nav-user-dropdown">
+          <button class="nav-user-btn" onclick="toggleUserDropdown()" id="nav-user-btn">
+            <span class="nav-user-avatar" id="nav-user-avatar">S</span>
+            <span class="nav-user-name" id="nav-user-name"></span>
+            <span style="font-size:10px;opacity:0.5">▾</span>
+          </button>
+          <div class="nav-user-menu" id="nav-user-menu" style="display:none;">
+            <div class="nav-user-menu-email" id="nav-user-menu-email"></div>
+            <div class="nav-user-menu-divider"></div>
+            <button class="nav-user-menu-item" onclick="logoutUser()">Keluar</button>
+            <button class="nav-user-menu-item danger" onclick="toggleUserDropdown();showDeleteConfirm()">Hapus Akun</button>
+          </div>
+        </div>
       </div>
       <button class="nav-hamburger" id="nav-hamburger" aria-label="Menu" onclick="toggleMobileNav()">
         <span></span><span></span><span></span>

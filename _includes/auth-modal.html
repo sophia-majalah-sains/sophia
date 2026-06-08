@@ -24,6 +24,9 @@
       <p class="auth-error" id="login-error"></p>
       <button class="btn-auth-submit" onclick="handleLogin()">Log In</button>
     </div>
+    <p class="auth-switch" style="margin-top:12px">
+      <a href="#" onclick="switchPanel('forgot'); return false;" style="color:var(--text-lighter);font-size:12px">Lupa password?</a>
+    </p>
     <p class="auth-switch">Belum punya akun? <a href="#" onclick="switchPanel('register'); return false;">Daftar gratis</a></p>
   </div>
 
@@ -50,12 +53,38 @@
     <p class="auth-switch">Sudah punya akun? <a href="#" onclick="switchPanel('login'); return false;">Log in</a></p>
   </div>
 
+  <!-- FORGOT PASSWORD PANEL -->
+  <div class="auth-panel" id="panel-forgot" style="display:none;">
+    <h2 class="auth-title">Lupa Password</h2>
+    <p class="auth-subtitle">Masukkan emailmu dan kami kirimkan link untuk reset password.</p>
+    <div class="auth-form">
+      <div class="form-group">
+        <label for="forgot-email">Email</label>
+        <input type="email" id="forgot-email" placeholder="nama@email.com" autocomplete="email">
+      </div>
+      <p class="auth-error" id="forgot-error"></p>
+      <button class="btn-auth-submit" onclick="handleForgotPassword()">Kirim Link Reset</button>
+    </div>
+    <p class="auth-switch"><a href="#" onclick="switchPanel('login'); return false;">← Kembali ke Login</a></p>
+  </div>
+
   <!-- SUCCESS PANEL -->
   <div class="auth-panel" id="panel-success" style="display:none;">
     <div class="auth-success-icon">✓</div>
-    <h2 class="auth-title">Selamat datang!</h2>
+    <h2 class="auth-title">Berhasil!</h2>
     <p class="auth-subtitle" id="success-message">Kamu sudah masuk ke Sophia.</p>
     <button class="btn-auth-submit" onclick="closeAuthModal()">Mulai Membaca</button>
+  </div>
+
+  <!-- DELETE ACCOUNT CONFIRM PANEL -->
+  <div class="auth-panel" id="panel-delete-confirm" style="display:none;">
+    <div class="auth-success-icon" style="background:#CC3333;">✕</div>
+    <h2 class="auth-title" style="color:#CC3333;">Hapus Akun?</h2>
+    <p class="auth-subtitle">Akun kamu akan dihapus permanen. Data tidak bisa dipulihkan. Kamu yakin?</p>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px">
+      <button class="btn-auth-delete btn-auth-submit" style="background:#CC3333;" onclick="handleDeleteAccount()">Ya, Hapus Akun Saya</button>
+      <button class="btn-auth-submit" style="background:transparent;color:var(--navy);border:1.5px solid var(--border);" onclick="closeAuthModal()">Batal</button>
+    </div>
   </div>
 
 </div>
