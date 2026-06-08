@@ -1,0 +1,48 @@
+<nav class="site-nav" id="site-nav">
+  <div class="nav-inner">
+
+    <a href="{{ '/' | relative_url }}" class="nav-brand">
+      <div class="nav-logo">
+        <span>S</span>
+        <div class="nav-logo-dot"></div>
+      </div>
+      <div class="nav-brand-text">
+        <span class="nav-name">sophia</span>
+        <span class="nav-tagline">SAINS · TEKNOLOGI · BUDAYA</span>
+      </div>
+    </a>
+
+    <div class="nav-links" id="nav-links">
+      <a href="{{ '/' | relative_url }}" class="nav-link {% if page.url == '/' %}active{% endif %}">Home</a>
+      <a href="{{ '/artikel' | relative_url }}" class="nav-link {% if page.url contains '/artikel' %}active{% endif %}">Artikel</a>
+      <a href="{{ '/edisi' | relative_url }}" class="nav-link {% if page.url contains '/edisi' %}active{% endif %}">Edisi</a>
+      <a href="{{ '/tentang' | relative_url }}" class="nav-link {% if page.url contains '/tentang' %}active{% endif %}">Tentang</a>
+    </div>
+
+    <div class="nav-actions">
+      <div id="nav-auth-guest" class="nav-auth-guest">
+        <button class="btn-nav-login" onclick="openAuthModal('login')">Log In</button>
+        <button class="btn-nav-register" onclick="openAuthModal('register')">Daftar</button>
+      </div>
+      <div id="nav-auth-user" class="nav-auth-user" style="display:none;">
+        <div class="nav-user-dropdown">
+          <button class="nav-user-btn" onclick="toggleUserDropdown()" id="nav-user-btn">
+            <span class="nav-user-avatar" id="nav-user-avatar">S</span>
+            <span class="nav-user-name" id="nav-user-name"></span>
+            <span style="font-size:10px;opacity:0.5">▾</span>
+          </button>
+          <div class="nav-user-menu" id="nav-user-menu" style="display:none;">
+            <div class="nav-user-menu-email" id="nav-user-menu-email"></div>
+            <div class="nav-user-menu-divider"></div>
+            <button class="nav-user-menu-item" onclick="logoutUser()">Keluar</button>
+            <button class="nav-user-menu-item danger" onclick="toggleUserDropdown();showDeleteConfirm()">Hapus Akun</button>
+          </div>
+        </div>
+      </div>
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Menu" onclick="toggleMobileNav()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+
+  </div>
+</nav>

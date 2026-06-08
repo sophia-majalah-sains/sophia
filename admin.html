@@ -127,7 +127,7 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
 
 /* Dashboard */
 .dashboard-stats{
-  display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px;
+  display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:32px;
 }
 .stat-card{
   background:var(--warm-white);border:1px solid var(--border);
@@ -422,6 +422,11 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
       <input type="password" id="login-token" placeholder="ghp_..." autocomplete="off">
       <span style="font-size:11px;color:#9AA5BE;margin-top:4px;display:block">Token tidak tersimpan di kode. Hanya di memori sesi ini.</span>
     </div>
+    <div class="form-group">
+      <label>Admin Secret</label>
+      <input type="password" id="login-admin-secret" placeholder="Secret yang kamu set di Supabase" autocomplete="off">
+      <span style="font-size:11px;color:#9AA5BE;margin-top:4px;display:block">Untuk akses panel Subscribers.</span>
+    </div>
     <p class="login-error" id="login-error"></p>
     <button class="btn-login" onclick="doLogin()">Masuk</button>
   </div>
@@ -459,6 +464,9 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
         </button>
         <button class="sidebar-link" data-panel="new-article" onclick="newArticle();switchPanel('new-article',this)">
           <span class="icon">✏️</span> Artikel Baru
+        </button>
+        <button class="sidebar-link" data-panel="subscribers" onclick="switchPanel('subscribers',this);loadSubscribers()">
+          <span class="icon">👥</span> Subscribers
         </button>
       </div>
       <div class="sidebar-divider"></div>
@@ -506,6 +514,11 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
             <div class="stat-label">Edisi Terbaru</div>
             <div class="stat-value" id="stat-edisi">–</div>
             <div class="stat-sub">nomor edisi tertinggi</div>
+          </div>
+          <div class="stat-card" style="cursor:pointer" onclick="switchPanel('subscribers',null);loadSubscribers()">
+            <div class="stat-label">Subscribers</div>
+            <div class="stat-value" id="stat-subscribers">–</div>
+            <div class="stat-sub">pengguna terdaftar</div>
           </div>
         </div>
         <div class="page-header" style="margin-top:8px">
@@ -690,7 +703,22 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
         </div>
       </div>
 
-    </div><!-- /main-content -->
+      <!-- ── SUBSCRIBERS ── -->
+      <div class="panel" id="panel-subscribers">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Subscribers</div>
+            <div class="page-subtitle" id="sub-subtitle">Memuat...</div>
+          </div>
+          <button class="btn-secondary" onclick="exportSubscribersCSV()">⬇ Export CSV</button>
+        </div>
+        <div class="search-bar">
+          <input class="search-input" type="text" placeholder="Cari nama atau email..." oninput="filterSubscribers(this.value)">
+        </div>
+        <div id="subscribers-list"></div>
+      </div>
+
+
   </div><!-- /app-body -->
 </div><!-- /app -->
 
@@ -770,14 +798,14 @@ let rubrikFilter = null;
 async function doLogin() {
   const email = document.getElementById('login-email').value.trim();
   const pass  = document.getElementById('login-password').value;
-  const token = document.getElementById('login-token').value.trim();
-  const err   = document.getElementById('login-error');
+  const token       = document.getElementById('login-token').value.trim();
+  const adminSecret = document.getElementById('login-admin-secret').value.trim();
+  const err         = document.getElementById('login-error');
 
   if (email !== ADMIN_EMAIL)    { err.textContent = 'Email tidak dikenali.'; return; }
   if (pass  !== ADMIN_PASSWORD) { err.textContent = 'Password salah.'; return; }
   if (!token || !token.startsWith('ghp_')) { err.textContent = 'GitHub token tidak valid. Harus diawali ghp_'; return; }
 
-  // Verify token against GitHub API before proceeding
   err.textContent = 'Memverifikasi token...';
   try {
     const test = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}`, {
@@ -788,6 +816,7 @@ async function doLogin() {
 
   sessionStorage.setItem('sophia_admin', '1');
   sessionStorage.setItem('sophia_gh_token', token);
+  if (adminSecret) sessionStorage.setItem('sophia_admin_secret', adminSecret);
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').style.display = 'flex';
   document.getElementById('topbar-user').textContent = email;
@@ -802,6 +831,7 @@ function doLogout() {
     function() {
       sessionStorage.removeItem('sophia_admin');
       sessionStorage.removeItem('sophia_gh_token');
+      sessionStorage.removeItem('sophia_admin_secret');
       location.reload();
     }
   );
@@ -820,7 +850,131 @@ if (sessionStorage.getItem('sophia_admin') && sessionStorage.getItem('sophia_gh_
 }
 
 // ══════════════════════════════════════════════════════════════
-// INIT
+// SUBSCRIBERS (Supabase)
+// ══════════════════════════════════════════════════════════════
+
+const SUPABASE_URL = 'https://ayhxgiacqthxalvrezxy.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_IqdChXiwuHG_svXN2mqK4A_a6WgP_Qr';
+const EDGE_FN_URL  = 'https://ayhxgiacqthxalvrezxy.supabase.co/functions/v1/admin-users';
+// Admin secret entered at login — never stored in code
+function getAdminSecret() { return sessionStorage.getItem('sophia_admin_secret') || ''; }
+
+let allSubscribers = [];
+
+async function loadSubscribers() {
+  document.getElementById('subscribers-list').innerHTML = '<div style="padding:32px;text-align:center;color:var(--text-lighter)">Memuat subscribers...</div>';
+
+  if (!getAdminSecret()) {
+    document.getElementById('subscribers-list').innerHTML = '<div class="empty-state"><div class="empty-state-icon">🔒</div><h3>Admin Secret diperlukan</h3><p>Masukkan Admin Secret saat login untuk mengakses panel ini.</p></div>';
+    document.getElementById('sub-subtitle').textContent = 'Admin secret tidak ditemukan';
+    return;
+  }
+
+  try {
+    const res = await fetch(`${EDGE_FN_URL}?action=list`, {
+      headers: {
+        'x-admin-secret': getAdminSecret(),
+        'apikey': SUPABASE_KEY
+      }
+    });
+    if (!res.ok) throw new Error('Akses ditolak. Periksa Admin Secret.');
+    allSubscribers = await res.json();
+    renderSubscribers(allSubscribers);
+    document.getElementById('sub-subtitle').textContent = allSubscribers.length + ' subscriber terdaftar';
+    var statEl = document.getElementById('stat-subscribers');
+    if (statEl) statEl.textContent = allSubscribers.length;
+  } catch(e) {
+    document.getElementById('subscribers-list').innerHTML = '<div class="empty-state"><div class="empty-state-icon">👥</div><h3>Gagal memuat</h3><p>' + e.message + '</p></div>';
+  }
+}
+
+function renderSubscribers(list) {
+  var el = document.getElementById('subscribers-list');
+  if (!list.length) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-state-icon">👥</div><h3>Belum ada subscriber</h3><p>Subscriber akan muncul di sini setelah ada yang mendaftar.</p></div>';
+    return;
+  }
+  el.innerHTML = `<table class="articles-table">
+    <thead><tr>
+      <th>Nama</th><th>Email</th><th>Bergabung</th><th>Aksi</th>
+    </tr></thead>
+    <tbody>${list.map(s => `
+      <tr>
+        <td style="font-weight:600;color:var(--navy)">${esc(s.name||'–')}</td>
+        <td>${esc(s.email)}</td>
+        <td>${new Date(s.created_at).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'})}</td>
+        <td>
+          <button class="btn-danger btn-sm" onclick="confirmDeleteSubscriber('${s.id}','${esc(s.name||s.email)}')">Hapus</button>
+        </td>
+      </tr>`).join('')}
+    </tbody>
+  </table>`;
+}
+
+function filterSubscribers(q) {
+  if (!q) { renderSubscribers(allSubscribers); return; }
+  var lower = q.toLowerCase();
+  renderSubscribers(allSubscribers.filter(s =>
+    (s.name||'').toLowerCase().includes(lower) ||
+    (s.email||'').toLowerCase().includes(lower)
+  ));
+}
+
+function confirmDeleteSubscriber(id, name) {
+  showConfirm(
+    'Hapus subscriber?',
+    '"' + name + '" akan dihapus permanen dari database.',
+    'Ya, hapus',
+    () => deleteSubscriber(id)
+  );
+}
+
+async function deleteSubscriber(id) {
+  showLoading('Menghapus subscriber...');
+  try {
+    const res = await fetch(`${EDGE_FN_URL}?action=delete`, {
+      method: 'POST',
+      headers: {
+        'x-admin-secret': getAdminSecret(),
+        'apikey': SUPABASE_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ id })
+    });
+    hideLoading();
+    if (res.ok) {
+      showToast('Subscriber dihapus.', 'success');
+      await loadSubscribers();
+    } else {
+      const e = await res.json();
+      showToast('Gagal: ' + (e.error || 'Error'), 'error');
+    }
+  } catch(e) {
+    hideLoading();
+    showToast('Error: ' + e.message, 'error');
+  }
+}
+
+function exportSubscribersCSV() {
+  if (!allSubscribers.length) { showToast('Tidak ada data untuk diexport.', 'error'); return; }
+  var rows = [['Nama','Email','Tanggal Bergabung']];
+  allSubscribers.forEach(function(s) {
+    rows.push([
+      s.name || '',
+      s.email,
+      new Date(s.created_at).toLocaleDateString('id-ID')
+    ]);
+  });
+  var csv = rows.map(r => r.map(v => '"' + String(v).replace(/"/g,'""') + '"').join(',')).join('\n');
+  var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  var url  = URL.createObjectURL(blob);
+  var a    = document.createElement('a');
+  a.href = url; a.download = 'sophia-subscribers-' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('CSV berhasil didownload.', 'success');
+}
+
 // ══════════════════════════════════════════════════════════════
 
 async function init() {

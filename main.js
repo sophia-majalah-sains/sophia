@@ -15,7 +15,24 @@
   }, { passive: true });
 })();
 
-// ---- Mobile nav toggle ----
+// ---- User dropdown ----
+function toggleUserDropdown() {
+  var menu = document.getElementById('nav-user-menu');
+  if (!menu) return;
+  menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+}
+
+// Close dropdown on outside click
+document.addEventListener('click', function(e) {
+  var btn  = document.getElementById('nav-user-btn');
+  var menu = document.getElementById('nav-user-menu');
+  if (!btn || !menu) return;
+  if (!btn.contains(e.target) && !menu.contains(e.target)) {
+    menu.style.display = 'none';
+  }
+});
+
+
 function toggleMobileNav() {
   var links = document.getElementById('nav-links');
   if (!links) return;
