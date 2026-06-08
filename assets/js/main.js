@@ -15,7 +15,24 @@
   }, { passive: true });
 })();
 
-// ---- Mobile nav toggle ----
+// ---- User dropdown ----
+function toggleUserDropdown() {
+  var menu = document.getElementById('nav-user-menu');
+  if (!menu) return;
+  menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+}
+
+// Close dropdown on outside click
+document.addEventListener('click', function(e) {
+  var btn  = document.getElementById('nav-user-btn');
+  var menu = document.getElementById('nav-user-menu');
+  if (!btn || !menu) return;
+  if (!btn.contains(e.target) && !menu.contains(e.target)) {
+    menu.style.display = 'none';
+  }
+});
+
+
 function toggleMobileNav() {
   var links = document.getElementById('nav-links');
   if (!links) return;
@@ -73,20 +90,19 @@ document.addEventListener('DOMContentLoaded', function() {
   forms.forEach(function(form) {
     form.addEventListener('submit', function(e) {
       e.preventDefault();
-      var emailInput = form.querySelector('.signup-input');
-      var email = emailInput ? emailInput.value.trim() : '';
+      var nameInput  = form.querySelector('#signup-name');
+      var emailInput = form.querySelector('#signup-email') || form.querySelector('.signup-input');
+      var name  = nameInput  ? nameInput.value.trim()  : '';
+      var email = emailInput ? emailInput.value.trim()  : '';
       if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return;
 
-      // Submit to Formspree
       fetch('https://formspree.io/f/mgobolpq', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({ email: email, _subject: 'Pendaftaran Sophia baru' })
+        body: JSON.stringify({ name: name, email: email, _subject: 'Pendaftaran Sophia baru: ' + (name||email) })
       }).then(function(res) {
         if (res.ok) {
-          // Show success message
-          form.innerHTML = '<p style="color:var(--sains);font-weight:600;font-size:15px;">Terima kasih! Cek emailmu untuk konfirmasi.</p>';
-          // Also open register modal to create account
+          form.innerHTML = '<p style="color:var(--sains);font-weight:600;font-size:15px;">Terima kasih' + (name ? ', ' + name : '') + '! Cek emailmu untuk konfirmasi.</p>';
           setTimeout(function() { openAuthModal('register'); }, 1000);
         }
       }).catch(function() {});
