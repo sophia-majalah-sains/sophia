@@ -47,7 +47,11 @@ permalink: /artikel/
            data-rubrik="{{ article.rubrik | downcase | replace: ' ', '-' | replace: '&', '' | replace: '--', '-' }}">
           <div class="card-img">
             {% if article.cover_image %}
-            <img src="{{ article.cover_image | relative_url }}" alt="{{ article.title }}" loading="lazy">
+            {% if article.cover_image contains 'http' %}
+            <img src="{{ article.cover_image }}" alt="{{ article.title }}" loading="lazy" style="object-position: {{ article.cover_position | default: 'center center' }}">
+            {% else %}
+            <img src="{{ article.cover_image | relative_url }}" alt="{{ article.title }}" loading="lazy" style="object-position: {{ article.cover_position | default: 'center center' }}">
+            {% endif %}
             {% else %}
             <div class="card-img-placeholder">{{ article.rubrik | slice: 0 }}</div>
             {% endif %}
