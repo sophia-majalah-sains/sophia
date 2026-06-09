@@ -23,7 +23,7 @@ async function loadSearchIndex() {
   if (_searchIndex) return;
   try {
     var base = document.querySelector('base') ? document.querySelector('base').href : '';
-    var res = await fetch('/sophia/search-index.json');
+    var res = await fetch('/search-index.json');
     if (res.ok) _searchIndex = await res.json();
   } catch(e) { _searchIndex = []; }
 }

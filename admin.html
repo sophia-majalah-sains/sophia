@@ -408,7 +408,7 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
 <div id="login-screen">
   <div class="login-card">
     <div class="login-brand">
-      <img src="https://sophia-majalah-sains.github.io/sophia/assets/images/sophia-logo-icon.png"
+      <img src="https://discoversophia.id/assets/images/sophia-logo-icon.png"
            alt="Sophia" style="width:42px;height:42px;object-fit:contain;flex-shrink:0;">
       <div class="login-brand-text">
         <div class="brand-name">sophia</div>
@@ -443,7 +443,7 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
   <!-- Top bar -->
   <div class="topbar">
     <div class="topbar-brand">
-      <img src="https://sophia-majalah-sains.github.io/sophia/assets/images/sophia-logo-icon.png"
+      <img src="https://discoversophia.id/assets/images/sophia-logo-icon.png"
            alt="Sophia" style="width:30px;height:30px;object-fit:contain;flex-shrink:0;">
       <span class="topbar-name">sophia</span>
       <span class="topbar-badge">ADMIN</span>
@@ -1408,7 +1408,7 @@ async function uploadImageToGitHub(base64data, filename) {
 
   const data = await res.json();
   // Return the absolute URL using the download URL from GitHub API
-  return `https://sophia-majalah-sains.github.io/sophia/assets/images/${filename}`;
+  return `https://discoversophia.id/assets/images/${filename}`;
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1521,9 +1521,9 @@ function insertImageToEditor(id) {
   const img = imageLibrary.find(i => i.id === id);
   if (!img) return;
   // Use full absolute URL so markdown renders correctly on GitHub Pages
-  const base = 'https://sophia-majalah-sains.github.io';
+  const base = 'https://discoversophia.id';
   const src = img.isUpload
-    ? (img.uploadedUrl ? base + img.uploadedUrl : base + `/sophia/assets/images/${img.name}`)
+    ? (img.uploadedUrl ? base + img.uploadedUrl : base + `/assets/images/${img.name}`)
     : img.url;
   const md  = `\n![](${src})\n`;
   const ta  = document.getElementById('ed-content');
@@ -1573,8 +1573,8 @@ function getCoverImageUrl() {
   if (!thumbnailId) return '';
   const img = imageLibrary.find(i => i.id === thumbnailId);
   if (!img) return '';
-  const base = 'https://sophia-majalah-sains.github.io';
-  if (img.isUpload) return img.uploadedUrl || (base + `/sophia/assets/images/${img.name}`);
+  const base = 'https://discoversophia.id';
+  if (img.isUpload) return img.uploadedUrl || (base + `/assets/images/${img.name}`);
   return img.url || '';
 }
 
@@ -1592,7 +1592,7 @@ function loadImagesFromFrontmatter(fm) {
     renderImageList();
   } else if (fm.cover_image) {
     const id = 'img_existing';
-    const fullUrl = fm.cover_image.startsWith('/') ? `https://sophia-majalah-sains.github.io${fm.cover_image}` : fm.cover_image;
+    const fullUrl = fm.cover_image.startsWith('/') ? `https://discoversophia.id${fm.cover_image}` : fm.cover_image;
     imageLibrary.push({ id, name: fm.cover_image.split('/').pop(), previewUrl: fullUrl, url: fm.cover_image, isUpload: false });
     thumbnailId = id;
     renderImageList();

@@ -277,7 +277,7 @@ async function handleDeleteAccount() {
     notice.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);background:#2D7D52;color:white;padding:14px 24px;border-radius:8px;font-family:"DM Sans",sans-serif;font-size:14px;font-weight:600;z-index:999;box-shadow:0 4px 20px rgba(0,0,0,0.15)';
     notice.textContent = 'Akun kamu telah dihapus. Sampai jumpa!';
     document.body.appendChild(notice);
-    setTimeout(function() { window.location.href = '/sophia/'; }, 2500);
+    setTimeout(function() { window.location.href = '/'; }, 2500);
   } catch(e) {
     setLoading(btn, false, 'Ya, Hapus Akun Saya');
   }
