@@ -9,7 +9,7 @@ read_time: 7
 access: members
 tags: [tidur, otak, kesehatan, sains]
 excerpt: "Kita menghabiskan sepertiga hidup untuk tidur. Tapi mengapa? Jawabannya jauh lebih menakjubkan dari sekadar 'supaya tidak mengantuk'."
-cover_image: /sophia/assets/images/1780931458367-pexels-ron-lach-8086364.jpg
+cover_image: https://sophia-majalah-sains.github.io/sophia/assets/images/1780931458367-pexels-ron-lach-8086364.jpg
 ---
 
 Kita menghabiskan sepertiga hidup untuk tidur. Tapi mengapa? Jawabannya jauh lebih menakjubkan dari sekadar "supaya tidak mengantuk."
