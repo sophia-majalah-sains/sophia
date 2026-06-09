@@ -1165,6 +1165,8 @@ a { color: inherit; text-decoration: none; }
   padding: 48px;
   width: 100%;
   max-width: 420px;
+  max-height: 90vh;
+  overflow-y: auto;
   box-shadow: var(--shadow-lg);
   transition: transform 0.2s, opacity 0.2s;
   opacity: 0;

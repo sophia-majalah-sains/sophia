@@ -82,7 +82,7 @@ function closeAuthModal() {
 }
 
 function switchPanel(name) {
-  ['login', 'register', 'success', 'forgot', 'delete-confirm'].forEach(function(p) {
+  ['login', 'register', 'success', 'forgot', 'delete-confirm', 'profile'].forEach(function(p) {
     var el = document.getElementById('panel-' + p);
     if (el) el.style.display = (p === name) ? 'block' : 'none';
   });
