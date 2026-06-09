@@ -421,6 +421,43 @@ document.addEventListener('DOMContentLoaded', async function() {
   }
 });
 
+// ---- Recently read ----
+
+async function loadRecentlyRead(user) {
+  try {
+    // Try Supabase first
+    var session = getSession();
+    if (session && session.access_token && user && user.id) {
+      var res = await fetch(
+        SUPABASE_URL + '/rest/v1/profiles?id=eq.' + user.id + '&select=recently_read',
+        {
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': 'Bearer ' + session.access_token,
+            'Accept': 'application/json'
+          }
+        }
+      );
+      if (res.ok) {
+        var rows = await res.json();
+        var supabaseList = rows && rows[0] && rows[0].recently_read;
+        if (supabaseList && supabaseList.length) {
+          // Sync back to localStorage
+          localStorage.setItem('sophia_recently_read', JSON.stringify(supabaseList));
+          return supabaseList;
+        }
+      }
+    }
+  } catch(e) {}
+
+  // Fallback to localStorage
+  try {
+    return JSON.parse(localStorage.getItem('sophia_recently_read')) || [];
+  } catch(e) {
+    return [];
+  }
+}
+
 // ---- Profile ----
 
 // Rate limiting: max 1 profile update per 60 seconds
@@ -449,12 +486,12 @@ function openProfile() {
   }
   _lastAvatarData = null;
 
-  // Load recently read articles
+  // Load recently read articles from Supabase, fallback to localStorage
   var recentList = document.getElementById('recently-read-list');
   if (recentList) {
-    try {
-      var recent = JSON.parse(localStorage.getItem('sophia_recently_read')) || [];
-      if (recent.length) {
+    recentList.innerHTML = '<p style="font-size:12px;color:var(--text-lighter)">Memuat...</p>';
+    loadRecentlyRead(user).then(function(recent) {
+      if (recent && recent.length) {
         recentList.innerHTML = recent.map(function(a) {
           return '<a href="' + a.url + '" onclick="closeAuthModal()" style="display:flex;flex-direction:column;gap:2px;padding:8px 10px;background:var(--cream);border-radius:6px;text-decoration:none;transition:background 0.15s" onmouseover="this.style.background=\'var(--cream-dark)\'" onmouseout="this.style.background=\'var(--cream)\'">' +
             '<span style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold)">' + (a.rubrik || 'Artikel') + '</span>' +
@@ -464,9 +501,7 @@ function openProfile() {
       } else {
         recentList.innerHTML = '<p style="font-size:13px;color:var(--text-lighter)">Belum ada artikel yang dibaca.</p>';
       }
-    } catch(e) {
-      recentList.innerHTML = '';
-    }
+    });
   }
 
   openAuthModal('profile');
