@@ -1482,7 +1482,6 @@ function renderImageList() {
   // Show/hide position picker based on whether thumbnail is set
   const posWrap = document.getElementById('img-position-wrap');
   const posPreviewImg = document.getElementById('img-pos-preview-img');
-  const thumb = imageLibrary.find(i => i.id === thumbnailId);
   if (thumb && posWrap) {
     posWrap.style.display = 'block';
     if (posPreviewImg) {
