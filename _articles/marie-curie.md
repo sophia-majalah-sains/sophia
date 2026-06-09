@@ -10,6 +10,7 @@ access: members
 tags: [sains, sejarah, perempuan, fisika, kimia]
 excerpt: Marie Curie tidak hanya menemukan dua unsur baru. Dia membuktikan bahwa batas yang dibuat oleh masyarakat bisa ditembus oleh ketekunan dan kejujuran intelektual.
 cover_image: "https://sophia-majalah-sains.github.io/sophia/assets/images/1780970423008-marie-curie.jpg"
+cover_position: top center
 ---
 
 Marie Curie tidak hanya menemukan dua unsur baru. Dia membuktikan bahwa batas yang dibuat oleh masyarakat bisa ditembus oleh ketekunan dan kejujuran intelektual.
