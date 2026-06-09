@@ -94,18 +94,14 @@ title: Sophia · Sains, Teknologi & Budaya untuk Keluarga Indonesia
     <div class="section-header fade-up">
       <h2 class="section-title">Jelajahi <span>Kolom</span></h2>
     </div>
-    <div style="display:grid; grid-template-columns: repeat(3,1fr); gap:20px;">
+    <div style="display:grid; grid-template-columns: repeat(3,1fr); gap:16px;" class="kolom-grid">
       {% assign rubriks = "Sains,Teknologi,Budaya,Pojok Anak,Tokoh Inspiratif,Alam & Satwa" | split: "," %}
       {% for rubrik in rubriks %}
       {% assign slug = rubrik | downcase | replace: ' ', '-' | replace: '&', '' | replace: '--', '-' %}
-      <a href="{{ '/artikel' | relative_url }}?rubrik={{ slug }}" class="fade-up" style="
-        display:flex; align-items:center; gap:14px;
-        background: var(--warm-white); border:1px solid var(--border-gold);
-        border-radius: var(--radius-lg); padding:20px 24px;
-        transition: transform 0.2s, box-shadow 0.2s;
-        text-decoration:none;
-      " onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='var(--shadow-md)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
-        <span class="card-rubrik rubrik-{{ slug }}" style="margin:0; font-size:10px;">{{ rubrik }}</span>
+      <a href="{{ '/artikel' | relative_url }}?rubrik={{ slug }}" class="kolom-card fade-up"
+        onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='var(--shadow-md)'"
+        onmouseout="this.style.transform='';this.style.boxShadow=''">
+        <span class="card-rubrik rubrik-{{ slug }}" style="margin:0; font-size:10px; flex-shrink:0;">{{ rubrik }}</span>
         <span style="font-family:'Playfair Display',serif; font-size:15px; font-weight:600; color:var(--navy);">{{ rubrik }}</span>
       </a>
       {% endfor %}

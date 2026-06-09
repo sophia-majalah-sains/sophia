@@ -1540,6 +1540,28 @@ a { color: inherit; text-decoration: none; }
 
 .signup-btn:hover { background: var(--gold); color: var(--navy); }
 
+/* ── KOLOM GRID ── */
+.kolom-grid { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 960px) { .kolom-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px) { .kolom-grid { grid-template-columns: 1fr; } }
+
+.kolom-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--warm-white);
+  border: 1px solid var(--border-gold);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-decoration: none;
+  overflow: hidden;
+}
+@media (max-width: 480px) {
+  .kolom-card { padding: 14px 16px; gap: 10px; }
+  .kolom-card span:last-child { font-size: 13px !important; }
+}
+
 /* ── BREADCRUMB ── */
 .article-breadcrumb {
   background: var(--cream);
