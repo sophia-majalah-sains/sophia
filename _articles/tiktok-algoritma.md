@@ -10,6 +10,7 @@ access: free
 featured: true
 tags: [algoritma, teknologi, media-sosial, ai]
 excerpt: "Kamu scroll TikTok sebentar, lalu tiba-tiba dua jam berlalu. Bukan kebetulan. Ada sistem yang dirancang untuk memahami kamu lebih baik dari yang kamu sadari."
+cover_image: "https://sophia-majalah-sains.github.io/sophia/assets/images/1780970516602-pexels-mikoto-3367850-(1).jpg"
 ---
 
 Kamu scroll TikTok sebentar, lalu tiba-tiba dua jam berlalu. Bukan kebetulan. Ada sistem yang dirancang untuk memahami kamu lebih baik dari yang kamu sadari.
