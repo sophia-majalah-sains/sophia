@@ -667,11 +667,11 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
               <p style="font-size:11px;color:var(--text-light);margin-bottom:12px;line-height:1.5">Upload satu atau beberapa gambar. Pilih satu sebagai thumbnail/cover. Klik "Sisipkan" untuk menaruh gambar di dalam teks.</p>
 
               <!-- Upload area -->
-              <label for="img-upload-multi" class="image-upload-area" style="cursor:pointer;display:block;">
-                <div style="font-size:22px">🖼️</div>
-                <p>Klik untuk upload gambar</p>
-                <p style="font-size:11px;margin-top:2px">JPG, PNG, WebP, maks 2MB per file</p>
-              </label>
+                <label for="img-upload-multi" class="image-upload-area" style="cursor:pointer;display:block;">
+                  <div style="font-size:22px">🖼️</div>
+                  <p>Klik untuk upload gambar</p>
+                  <p style="font-size:11px;margin-top:2px">JPG, PNG, WebP — otomatis dikompres ke maks 1200px</p>
+                </label>
               <input type="file" id="img-upload-multi" accept="image/jpeg,image/png,image/webp" multiple style="display:none" onchange="handleMultiImageUpload(this)">
 
               <!-- Or URL -->
@@ -1436,22 +1436,62 @@ function resetImageLibrary() {
   renderImageList();
 }
 
-function handleMultiImageUpload(input) {
-  const files = Array.from(input.files);
-  files.forEach(file => {
-    if (file.size > 2 * 1024 * 1024) { showToast(`${file.name} terlalu besar (maks 2MB)`, 'error'); return; }
+// ── Image compression settings ──
+const IMG_MAX_WIDTH  = 1200;  // max width in px
+const IMG_MAX_HEIGHT = 900;   // max height in px
+const IMG_QUALITY    = 0.82;  // JPEG quality (0-1), 0.82 = good balance size/quality
+
+function compressImage(file) {
+  return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onload = function(e) {
-      const dataUrl = e.target.result;
-      const base64  = dataUrl.split(',')[1];
-      const id      = 'img_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
-      const name    = Date.now() + '-' + file.name.replace(/\s+/g,'-').toLowerCase();
-      imageLibrary.push({ id, name, previewUrl: dataUrl, base64, isUpload: true });
-      if (!thumbnailId) { thumbnailId = id; }
-      renderImageList();
+      const img = new Image();
+      img.onload = function() {
+        // Calculate new dimensions keeping aspect ratio
+        let w = img.width, h = img.height;
+        if (w > IMG_MAX_WIDTH || h > IMG_MAX_HEIGHT) {
+          const ratio = Math.min(IMG_MAX_WIDTH / w, IMG_MAX_HEIGHT / h);
+          w = Math.round(w * ratio);
+          h = Math.round(h * ratio);
+        }
+        // Draw to canvas and compress
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        const compressed = canvas.toDataURL('image/jpeg', IMG_QUALITY);
+        const base64 = compressed.split(',')[1];
+        // Calculate sizes for toast
+        const origKB = Math.round(file.size / 1024);
+        const newKB  = Math.round((base64.length * 3/4) / 1024);
+        resolve({ dataUrl: compressed, base64, origKB, newKB, w, h });
+      };
+      img.src = e.target.result;
     };
     reader.readAsDataURL(file);
   });
+}
+
+async function handleMultiImageUpload(input) {
+  const files = Array.from(input.files);
+  for (const file of files) {
+    if (file.size > 10 * 1024 * 1024) {
+      showToast(`${file.name} terlalu besar (maks 10MB sebelum kompresi)`, 'error');
+      continue;
+    }
+    showToast(`Mengompresi ${file.name}...`);
+    try {
+      const { dataUrl, base64, origKB, newKB, w, h } = await compressImage(file);
+      const id   = 'img_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
+      const name = Date.now() + '-' + file.name.replace(/\s+/g,'-').replace(/\.[^.]+$/, '').toLowerCase() + '.jpg';
+      imageLibrary.push({ id, name, previewUrl: dataUrl, base64, isUpload: true });
+      if (!thumbnailId) { thumbnailId = id; }
+      renderImageList();
+      showToast(`✓ ${file.name}: ${origKB}KB → ${newKB}KB (${w}×${h}px)`, 'success');
+    } catch(e) {
+      showToast(`Gagal kompresi ${file.name}`, 'error');
+    }
+  }
   input.value = '';
 }
 
