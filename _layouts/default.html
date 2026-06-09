@@ -55,9 +55,9 @@
     "datePublished": "{{ page.date | date_to_xmlschema }}",
     "dateModified": "{{ page.date | date_to_xmlschema }}",
     "author": {
-      "@type": "Organization",
-      "name": "Redaksi Sophia",
-      "url": "https://discoversophia.id"
+      "@type": "Person",
+      "name": "{% if page.author %}{{ page.author }}{% else %}Fariz Armesta{% endif %}",
+      "url": "https://discoversophia.id/tentang"
     },
     "publisher": {
       "@type": "Organization",

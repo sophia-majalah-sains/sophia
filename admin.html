@@ -599,6 +599,11 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
             <div class="sidebar-card">
               <div class="sidebar-card-title">Pengaturan Artikel</div>
               <div class="field">
+                <label>Penulis</label>
+                <input type="text" id="ed-author" placeholder="cth: Fariz Armesta">
+                <span class="field-hint">Kosongkan untuk default: Fariz Armesta</span>
+              </div>
+              <div class="field">
                 <label>Kolom</label>
                 <select id="ed-rubrik">
                   <option value="Cover Story">Cover Story</option>
@@ -1208,6 +1213,7 @@ function newArticle() {
   document.getElementById('ed-excerpt').value = '';
   document.getElementById('ed-tags').value = '';
   document.getElementById('ed-rubrik').value = 'Sains';
+  document.getElementById('ed-author').value = '';
   document.getElementById('ed-access').value = 'free';
   document.getElementById('ed-edisi').value = '';
   document.getElementById('ed-read-time').value = '';
@@ -1239,6 +1245,7 @@ function editArticle(filename) {
   document.getElementById('ed-excerpt').value   = fm.excerpt || '';
   document.getElementById('ed-tags').value      = Array.isArray(fm.tags) ? fm.tags.join(', ') : (fm.tags||'');
   document.getElementById('ed-rubrik').value    = fm.rubrik || 'Sains';
+  document.getElementById('ed-author').value    = fm.author || '';
   document.getElementById('ed-access').value    = fm.access || 'free';
   document.getElementById('ed-edisi').value     = fm.edisi || '';
   document.getElementById('ed-read-time').value = fm.read_time || '';
@@ -1278,6 +1285,7 @@ async function saveToGitHub(isDraft) {
   const excerpt  = document.getElementById('ed-excerpt').value.trim();
   const tagsRaw  = document.getElementById('ed-tags').value.trim();
   const rubrik   = document.getElementById('ed-rubrik').value;
+  const author   = document.getElementById('ed-author').value.trim();
   const access   = document.getElementById('ed-access').value;
   const edisi    = document.getElementById('ed-edisi').value.trim();
   const readTime = document.getElementById('ed-read-time').value.trim();
@@ -1312,6 +1320,7 @@ async function saveToGitHub(isDraft) {
     title,
     ...(subtitle && { subtitle }),
     rubrik,
+    ...(author && { author }),
     date,
     ...(edisi && { edisi: parseInt(edisi) }),
     ...(readTime && { read_time: parseInt(readTime) }),

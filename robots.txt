@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+# Block admin panel from indexing
+Disallow: /admin.html
+Disallow: /admin/
+
+# Block auth files
+Disallow: /assets/js/auth.js
+
+# Sitemap location
+Sitemap: https://discoversophia.id/sitemap.xml
