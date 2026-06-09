@@ -130,6 +130,13 @@ a { color: inherit; text-decoration: none; }
   z-index: 3;
 }
 
+.nav-logo-img {
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
 .nav-brand-text { line-height: 1; }
 
 .nav-name {

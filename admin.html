@@ -408,10 +408,8 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
 <div id="login-screen">
   <div class="login-card">
     <div class="login-brand">
-      <div class="login-logo">
-        <span>S</span>
-        <div class="login-logo-dot"></div>
-      </div>
+      <img src="https://sophia-majalah-sains.github.io/sophia/assets/images/sophia-logo-icon.png"
+           alt="Sophia" style="width:42px;height:42px;object-fit:contain;flex-shrink:0;">
       <div class="login-brand-text">
         <div class="brand-name">sophia</div>
         <div class="brand-sub">ADMIN PANEL</div>
@@ -445,7 +443,8 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
   <!-- Top bar -->
   <div class="topbar">
     <div class="topbar-brand">
-      <div class="topbar-logo"><span>S</span></div>
+      <img src="https://sophia-majalah-sains.github.io/sophia/assets/images/sophia-logo-icon.png"
+           alt="Sophia" style="width:30px;height:30px;object-fit:contain;flex-shrink:0;">
       <span class="topbar-name">sophia</span>
       <span class="topbar-badge">ADMIN</span>
     </div>
@@ -833,14 +832,13 @@ async function doLogin() {
     });
     const authData = await authRes.json();
     if (!authRes.ok || authData.error) {
-      err.textContent = authData.error || 'Login gagal.';
+      err.textContent = authData.error || `Login gagal (${authRes.status}). Pastikan Edge Function sudah di-deploy ulang.`;
       btn.disabled = false;
       return;
     }
-    // Store the admin secret returned from server
     sessionStorage.setItem('sophia_admin_secret', authData.token);
   } catch(e) {
-    err.textContent = 'Gagal menghubungi server. Periksa koneksi internet.';
+    err.textContent = 'Gagal menghubungi Edge Function: ' + e.message + '. Pastikan Edge Function sudah di-deploy.';
     btn.disabled = false;
     return;
   }
