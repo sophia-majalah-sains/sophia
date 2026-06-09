@@ -2,6 +2,55 @@
 layout: default
 ---
 
+{% assign rubrik_slug = page.rubrik | downcase | replace: ' ', '-' | replace: '&', '' | replace: '--', '-' %}
+
+<!-- BreadcrumbList Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://discoversophia.id"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Artikel",
+      "item": "https://discoversophia.id/artikel"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "{{ page.rubrik }}",
+      "item": "https://discoversophia.id/artikel?rubrik={{ rubrik_slug }}"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "{{ page.title | escape }}",
+      "item": "{{ page.url | absolute_url }}"
+    }
+  ]
+}
+</script>
+
+<!-- Visual breadcrumb -->
+<nav class="article-breadcrumb" aria-label="breadcrumb">
+  <div class="breadcrumb-inner">
+    <a href="/">Home</a>
+    <span class="bc-sep">›</span>
+    <a href="/artikel">Artikel</a>
+    <span class="bc-sep">›</span>
+    <a href="/artikel?rubrik={{ rubrik_slug }}">{{ page.rubrik }}</a>
+    <span class="bc-sep">›</span>
+    <span class="bc-current">{{ page.title | truncate: 50 }}</span>
+  </div>
+</nav>
+
 <article class="article-page">
 
   <header class="article-header" data-rubrik="{{ page.rubrik | downcase | replace: ' ', '-' }}">
