@@ -1,14 +1,15 @@
 ---
 layout: article
 title: "Marie Curie: Perempuan yang Menantang Dua Dunia"
-subtitle: "Ilmuwan pertama yang meraih dua Nobel Prize dari dua bidang ilmu yang berbeda"
+subtitle: Ilmuwan pertama yang meraih dua Nobel Prize dari dua bidang ilmu yang berbeda
 rubrik: Tokoh Inspiratif
 date: 2026-02-28
 edisi: 2
 read_time: 6
 access: members
 tags: [sains, sejarah, perempuan, fisika, kimia]
-excerpt: "Marie Curie tidak hanya menemukan dua unsur baru. Dia membuktikan bahwa batas yang dibuat oleh masyarakat bisa ditembus oleh ketekunan dan kejujuran intelektual."
+excerpt: Marie Curie tidak hanya menemukan dua unsur baru. Dia membuktikan bahwa batas yang dibuat oleh masyarakat bisa ditembus oleh ketekunan dan kejujuran intelektual.
+cover_image: "https://sophia-majalah-sains.github.io/sophia/assets/images/1780970423008-marie-curie.jpg"
 ---
 
 Marie Curie tidak hanya menemukan dua unsur baru. Dia membuktikan bahwa batas yang dibuat oleh masyarakat bisa ditembus oleh ketekunan dan kejujuran intelektual.
