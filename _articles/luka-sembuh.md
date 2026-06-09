@@ -1,7 +1,7 @@
 ---
 layout: article
 title: "Kenapa Luka Bisa Sembuh Sendiri?"
-subtitle: "Tubuhmu punya tim penyelamat yang selalu siaga"
+subtitle: Tubuhmu punya tim penyelamat yang selalu siaga
 rubrik: Pojok Anak
 date: 2026-03-05
 edisi: 2
@@ -9,6 +9,7 @@ read_time: 5
 access: free
 tags: [tubuh-manusia, biologi, kesehatan]
 excerpt: "Kalau kamu pernah jatuh dan lututmu terluka, kamu mungkin sudah menyaksikan sesuatu yang luar biasa: tubuhmu memperbaiki dirinya sendiri."
+cover_image: "https://sophia-majalah-sains.github.io/sophia/assets/images/1780970576311-pexels-cottonbro-5721552.jpg"
 ---
 
 Kalau kamu pernah jatuh dan lututmu terluka, kamu mungkin sudah menyaksikan sesuatu yang luar biasa: tubuhmu memperbaiki dirinya sendiri.
