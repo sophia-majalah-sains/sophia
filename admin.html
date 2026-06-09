@@ -378,6 +378,16 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
 .dot-alam-satwa{background:var(--alam)}
 .dot-cover-story{background:var(--navy)}
 
+/* Image position buttons */
+.img-pos-btn {
+  background: var(--warm-white); border: 1.5px solid var(--border);
+  color: var(--text-mid); padding: 5px 8px; border-radius: var(--radius);
+  font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 600;
+  cursor: pointer; transition: all 0.15s; text-align: center;
+}
+.img-pos-btn:hover { border-color: var(--gold); color: var(--navy); }
+.img-pos-btn.active { background: var(--navy); border-color: var(--navy); color: var(--cream); }
+
 /* Search */
 .search-bar{
   display:flex;align-items:center;gap:10px;margin-bottom:20px;
@@ -675,6 +685,23 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
               <!-- Thumbnail indicator -->
               <div id="thumbnail-indicator" style="display:none;margin-top:10px;padding:8px 10px;background:var(--gold-pale,rgba(197,151,58,0.12));border-radius:var(--radius);font-size:11px;color:#8B6914;font-weight:600">
                 ✓ Thumbnail: <span id="thumbnail-name">–</span>
+              </div>
+
+              <!-- Image position picker -->
+              <div id="img-position-wrap" style="display:none;margin-top:14px;">
+                <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-lighter);margin-bottom:8px;">Posisi tampilan thumbnail</div>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px;">
+                  <button class="img-pos-btn active" data-pos="top" onclick="setImagePosition('top',this)">Atas</button>
+                  <button class="img-pos-btn" data-pos="center" onclick="setImagePosition('center',this)">Tengah</button>
+                  <button class="img-pos-btn" data-pos="bottom" onclick="setImagePosition('bottom',this)">Bawah</button>
+                  <button class="img-pos-btn" data-pos="left" onclick="setImagePosition('left',this)">Kiri</button>
+                  <button class="img-pos-btn" data-pos="right" onclick="setImagePosition('right',this)">Kanan</button>
+                  <button class="img-pos-btn" data-pos="top center" onclick="setImagePosition('top center',this)">Atas Tengah</button>
+                </div>
+                <div style="font-size:11px;color:var(--text-lighter);margin-bottom:6px;">Preview posisi:</div>
+                <div id="img-pos-preview" style="width:100%;aspect-ratio:16/9;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);background:var(--cream-dark);">
+                  <img id="img-pos-preview-img" src="" style="width:100%;height:100%;object-fit:cover;object-position:top center;transition:object-position 0.3s;">
+                </div>
               </div>
 
               <!-- Caption for cover -->
@@ -1295,6 +1322,7 @@ async function saveToGitHub(isDraft) {
     ...(tags.length && { tags }),
     ...(excerpt && { excerpt }),
     ...(finalCoverUrl && { cover_image: finalCoverUrl }),
+    ...(finalCoverUrl && { cover_position: getCoverImagePosition() }),
     ...(coverCap && { cover_caption: coverCap }),
   };
 
@@ -1392,10 +1420,12 @@ async function uploadImageToGitHub(base64data, filename) {
 // imageLibrary: [{id, name, previewUrl, base64 (if local), url (if remote), isUpload, thumbnailSlot}]
 let imageLibrary = [];
 let thumbnailId  = null;
+let imagePosition = 'top center'; // default object-position
 
 function resetImageLibrary() {
   imageLibrary = [];
   thumbnailId  = null;
+  imagePosition = 'top center';
   renderImageList();
 }
 
@@ -1451,6 +1481,20 @@ function renderImageList() {
     </div>`).join('');
 
   const thumb = imageLibrary.find(i => i.id === thumbnailId);
+  // Show/hide position picker based on whether thumbnail is set
+  const posWrap = document.getElementById('img-position-wrap');
+  const posPreviewImg = document.getElementById('img-pos-preview-img');
+  const thumb = imageLibrary.find(i => i.id === thumbnailId);
+  if (thumb && posWrap) {
+    posWrap.style.display = 'block';
+    if (posPreviewImg) {
+      posPreviewImg.src = thumb.previewUrl;
+      posPreviewImg.style.objectPosition = imagePosition;
+    }
+  } else if (posWrap) {
+    posWrap.style.display = 'none';
+  }
+
   if (thumb) { ti.style.display = 'block'; tn.textContent = thumb.name; }
   else { ti.style.display = 'none'; }
 }
@@ -1458,6 +1502,16 @@ function renderImageList() {
 function setThumbnail(id) {
   thumbnailId = id;
   renderImageList();
+}
+
+function setImagePosition(pos, btn) {
+  imagePosition = pos;
+  // Update active button
+  document.querySelectorAll('.img-pos-btn').forEach(function(b) { b.classList.remove('active'); });
+  if (btn) btn.classList.add('active');
+  // Update preview
+  var preview = document.getElementById('img-pos-preview-img');
+  if (preview) preview.style.objectPosition = pos;
 }
 
 function removeImageFromLibrary(id) {
@@ -1525,6 +1579,10 @@ function getCoverImageUrl() {
   const base = 'https://sophia-majalah-sains.github.io';
   if (img.isUpload) return img.uploadedUrl || (base + `/sophia/assets/images/${img.name}`);
   return img.url || '';
+}
+
+function getCoverImagePosition() {
+  return imagePosition || 'top center';
 }
 
 // Populate image library when editing existing article

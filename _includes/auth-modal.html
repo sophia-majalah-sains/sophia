@@ -104,20 +104,28 @@
       </div>
       <button class="btn-secondary" style="font-size:12px;padding:6px 14px" onclick="document.getElementById('avatar-upload').click()">Ganti Foto</button>
       <input type="file" id="avatar-upload" accept="image/*" style="display:none" onchange="previewAvatar(this)">
-      <span style="font-size:11px;color:var(--text-lighter)">Maks 1MB · JPG/PNG</span>
+      <span style="font-size:11px;color:var(--text-lighter)">Maks 1MB, JPG/PNG</span>
     </div>
     <div class="form-group">
       <label for="profile-name">Nama</label>
       <input type="text" id="profile-name" placeholder="Nama kamu" autocomplete="name">
     </div>
     <div class="form-group">
-      <label for="profile-new-password">Password Baru <span style="font-weight:400;color:var(--text-lighter)">(kosongkan jika tidak diubah)</span></label>
-      <input type="password" id="profile-new-password" placeholder="Minimal 6 karakter" autocomplete="new-password">
+      <label>Ganti Password</label>
+      <input type="password" id="profile-current-password" placeholder="Password saat ini" autocomplete="current-password" style="margin-bottom:6px">
+      <input type="password" id="profile-new-password" placeholder="Password baru (min. 6 karakter)" autocomplete="new-password">
     </div>
     <p class="auth-error" id="profile-error"></p>
     <button class="btn-auth-submit" id="profile-save-btn" onclick="handleSaveProfile()">Simpan Perubahan</button>
   </div>
-  <p class="auth-switch" style="margin-top:12px">
+
+  <!-- Recently read -->
+  <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border);">
+    <div style="font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-lighter);margin-bottom:12px;">Terakhir Dibaca</div>
+    <div id="recently-read-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+  </div>
+
+  <p class="auth-switch" style="margin-top:16px">
     <a href="#" onclick="switchPanel('delete-confirm'); return false;" style="color:#CC3333;font-size:12px">Hapus akun saya</a>
   </p>
 </div>

@@ -24,9 +24,9 @@ layout: default
   {% if page.cover_image %}
   <div class="article-cover">
     {% if page.cover_image contains 'http' %}
-    <img src="{{ page.cover_image }}" alt="{{ page.title }}">
+    <img src="{{ page.cover_image }}" alt="{{ page.title }}" style="object-position: {{ page.cover_position | default: 'center center' }}">
     {% else %}
-    <img src="{{ page.cover_image | relative_url }}" alt="{{ page.title }}">
+    <img src="{{ page.cover_image | relative_url }}" alt="{{ page.title }}" style="object-position: {{ page.cover_position | default: 'center center' }}">
     {% endif %}
     {% if page.cover_caption %}<p class="cover-caption">{{ page.cover_caption }}</p>{% endif %}
   </div>
@@ -113,26 +113,40 @@ layout: default
 </style>
 
 <script>
-(function() {
+document.addEventListener('DOMContentLoaded', function() {
   var pageTitle = document.title.replace(' — Sophia', '').replace(' - Sophia', '');
   var pageUrl   = window.location.href;
-  var url  = encodeURIComponent(pageUrl);
-  var waText  = encodeURIComponent('Hai! Saya baru baca artikel menarik dari Sophia berjudul "' + pageTitle + '". Yuk baca juga, keren banget! ' + pageUrl);
-  var twText  = encodeURIComponent('Baru baca artikel ini dari Sophia dan sangat menarik. "' + pageTitle + '" ' + pageUrl + ' via @SophiaMajalah');
-  var tgText  = encodeURIComponent('Artikel ini dari Sophia layak banget untuk dibaca. "' + pageTitle + '" ' + pageUrl);
+  var url    = encodeURIComponent(pageUrl);
+  var waText = encodeURIComponent('Hai! Saya baru baca artikel menarik dari Sophia berjudul "' + pageTitle + '". Yuk baca juga! ' + pageUrl);
+  var twText = encodeURIComponent('Baru baca artikel ini dari Sophia dan sangat menarik. "' + pageTitle + '" ' + pageUrl);
+  var tgText = encodeURIComponent('Artikel ini dari Sophia layak banget untuk dibaca. "' + pageTitle + '" ' + pageUrl);
+
+  var wa = document.getElementById('share-wa');
+  var ig = document.getElementById('share-instagram');
+  var tw = document.getElementById('share-twitter');
+  var tg = document.getElementById('share-telegram');
 
   if (wa) wa.href = 'https://wa.me/?text=' + waText;
   if (tw) tw.href = 'https://twitter.com/intent/tweet?text=' + twText;
   if (tg) tg.href = 'https://t.me/share/url?url=' + url + '&text=' + tgText;
   if (ig) ig.onclick = function(e) {
     e.preventDefault();
-    navigator.clipboard.writeText(window.location.href).then(function() {
+    navigator.clipboard.writeText(pageUrl).then(function() {
       var b = document.getElementById('share-instagram'), o = b.innerHTML;
       b.textContent = '✓ Link disalin!'; b.style.background = '#2D7D52';
       setTimeout(function() { b.innerHTML = o; b.style.background = ''; }, 2500);
     });
   };
-})();
+
+  // Track this article as recently read
+  trackArticleRead({
+    title: pageTitle,
+    url: pageUrl,
+    rubrik: document.querySelector('.rubrik-badge') ? document.querySelector('.rubrik-badge').textContent.trim() : '',
+    date: new Date().toISOString()
+  });
+});
+
 function copyLink() {
   navigator.clipboard.writeText(window.location.href).then(function() {
     var btn = document.querySelector('.share-copy'), orig = btn.innerHTML;
@@ -140,6 +154,21 @@ function copyLink() {
     btn.style.background = '#2D7D52'; btn.style.color = '#fff';
     setTimeout(function() { btn.innerHTML = orig; btn.style.background = ''; btn.style.color = ''; }, 2000);
   });
+}
+
+// Track recently read articles (stored in localStorage, max 10)
+function trackArticleRead(article) {
+  try {
+    var key = 'sophia_recently_read';
+    var list = JSON.parse(localStorage.getItem(key)) || [];
+    // Remove duplicate if exists
+    list = list.filter(function(a) { return a.url !== article.url; });
+    // Add to front
+    list.unshift(article);
+    // Keep max 10
+    list = list.slice(0, 10);
+    localStorage.setItem(key, JSON.stringify(list));
+  } catch(e) {}
 }
 </script>
 

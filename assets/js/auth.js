@@ -430,10 +430,13 @@ var _lastAvatarData = null;
 function openProfile() {
   var user = getCurrentUser();
   if (!user) { openAuthModal('login'); return; }
-  var name = (user.user_metadata && user.user_metadata.name) || '';
+  var name  = (user.user_metadata && user.user_metadata.name) || '';
   var email = user.email || '';
   document.getElementById('profile-name').value = name;
-  document.getElementById('profile-new-password').value = '';
+  var curPwEl = document.getElementById('profile-current-password');
+  var newPwEl = document.getElementById('profile-new-password');
+  if (curPwEl) curPwEl.value = '';
+  if (newPwEl) newPwEl.value = '';
   document.getElementById('profile-email-display').textContent = email;
   document.getElementById('profile-error').textContent = '';
   document.getElementById('profile-avatar-initial').textContent = name.charAt(0).toUpperCase();
@@ -441,8 +444,31 @@ function openProfile() {
   var savedAvatar = localStorage.getItem('sophia_avatar_' + user.id);
   if (savedAvatar) {
     document.getElementById('profile-avatar-preview').innerHTML = '<img src="' + savedAvatar + '" style="width:100%;height:100%;object-fit:cover">';
+  } else {
+    document.getElementById('profile-avatar-preview').innerHTML = '<span id="profile-avatar-initial">' + name.charAt(0).toUpperCase() + '</span>';
   }
   _lastAvatarData = null;
+
+  // Load recently read articles
+  var recentList = document.getElementById('recently-read-list');
+  if (recentList) {
+    try {
+      var recent = JSON.parse(localStorage.getItem('sophia_recently_read')) || [];
+      if (recent.length) {
+        recentList.innerHTML = recent.map(function(a) {
+          return '<a href="' + a.url + '" onclick="closeAuthModal()" style="display:flex;flex-direction:column;gap:2px;padding:8px 10px;background:var(--cream);border-radius:6px;text-decoration:none;transition:background 0.15s" onmouseover="this.style.background=\'var(--cream-dark)\'" onmouseout="this.style.background=\'var(--cream)\'">' +
+            '<span style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold)">' + (a.rubrik || 'Artikel') + '</span>' +
+            '<span style="font-size:13px;font-weight:600;color:var(--navy)">' + a.title + '</span>' +
+            '</a>';
+        }).join('');
+      } else {
+        recentList.innerHTML = '<p style="font-size:13px;color:var(--text-lighter)">Belum ada artikel yang dibaca.</p>';
+      }
+    } catch(e) {
+      recentList.innerHTML = '';
+    }
+  }
+
   openAuthModal('profile');
 }
 
@@ -469,19 +495,45 @@ async function handleSaveProfile() {
     return;
   }
 
-  var name     = document.getElementById('profile-name').value.trim();
-  var password = document.getElementById('profile-new-password').value.trim();
-  var errEl    = document.getElementById('profile-error');
-  var btn      = document.getElementById('profile-save-btn');
+  var name        = document.getElementById('profile-name').value.trim();
+  var currentPass = (document.getElementById('profile-current-password') || {}).value || '';
+  var newPass     = (document.getElementById('profile-new-password') || {}).value || '';
+  var errEl       = document.getElementById('profile-error');
+  var btn         = document.getElementById('profile-save-btn');
 
   if (!name) { errEl.textContent = 'Nama tidak boleh kosong.'; return; }
-  if (password && password.length < 6) { errEl.textContent = 'Password minimal 6 karakter.'; return; }
+
+  // If user wants to change password, verify current one first
+  if (newPass) {
+    if (!currentPass) { errEl.textContent = 'Masukkan password saat ini untuk menggantinya.'; return; }
+    if (newPass.length < 6) { errEl.textContent = 'Password baru minimal 6 karakter.'; return; }
+    if (newPass === currentPass) { errEl.textContent = 'Password baru harus berbeda dari password saat ini.'; return; }
+
+    // Verify current password by attempting a sign-in
+    setLoading(btn, true, 'Memverifikasi...');
+    var user = getCurrentUser();
+    try {
+      var verifyRes = await sbPost('/token?grant_type=password', {
+        email: user.email,
+        password: currentPass
+      });
+      if (verifyRes.error || !verifyRes.access_token) {
+        errEl.textContent = 'Password saat ini salah.';
+        setLoading(btn, false, 'Simpan Perubahan');
+        return;
+      }
+    } catch(e) {
+      errEl.textContent = 'Gagal memverifikasi password.';
+      setLoading(btn, false, 'Simpan Perubahan');
+      return;
+    }
+  }
 
   setLoading(btn, true, 'Menyimpan...');
 
   try {
     var body = { data: { name: name } };
-    if (password) body.password = password;
+    if (newPass) body.password = newPass;
 
     var res = await fetch(AUTH_ENDPOINT + '/user', {
       method: 'PUT',
@@ -496,24 +548,23 @@ async function handleSaveProfile() {
       return;
     }
 
-    // Save avatar locally (Supabase free tier has no storage)
-    var user = getCurrentUser();
-    if (_lastAvatarData && user) {
-      localStorage.setItem('sophia_avatar_' + user.id, _lastAvatarData);
+    // Save avatar locally
+    var userObj = getCurrentUser();
+    if (_lastAvatarData && userObj) {
+      localStorage.setItem('sophia_avatar_' + userObj.id, _lastAvatarData);
     }
 
-    // Update session
     saveSession(data);
     updateNavAuth(data);
     _lastProfileUpdate = Date.now();
 
     errEl.style.color = 'var(--sains)';
-    errEl.textContent = 'Profil berhasil disimpan!';
+    errEl.textContent = newPass ? 'Profil dan password berhasil diperbarui!' : 'Profil berhasil disimpan!';
     setTimeout(function() {
       errEl.style.color = '';
       errEl.textContent = '';
       closeAuthModal();
-    }, 1500);
+    }, 1800);
   } catch(e) {
     errEl.textContent = 'Terjadi kesalahan. Coba lagi.';
   }
