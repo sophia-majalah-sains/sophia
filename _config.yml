@@ -33,3 +33,8 @@ exclude:
   - Gemfile.lock
   - node_modules
   - README.md
+  - admin.html
+  - auth-modal.html
+  - nav.html
+  - google14072a115a503c26.html
+  - teaser.pdf
