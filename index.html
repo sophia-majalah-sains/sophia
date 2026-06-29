@@ -3,156 +3,215 @@ layout: home
 title: Sophia · Sains, Teknologi & Budaya untuk Keluarga Indonesia
 ---
 
-<!-- HERO: featured article (cover story) + sidebar -->
-<div class="home-hero">
+<!-- ===================== HERO ===================== -->
+<section class="home-hero">
   <div class="hero-inner">
+    <div class="hero-left">
+      <div class="hero-kicker fade-up">Majalah Digital Indonesia</div>
+      <h1 class="hero-title fade-up fade-up-1">
+        Penasaran itu <em>awal</em><br>dari segalanya
+      </h1>
+      <p class="hero-desc fade-up fade-up-2">
+        Sophia adalah majalah digital sains, teknologi, dan budaya untuk keluarga Indonesia. Belajar bersama, mempersiapkan masa depan dengan pengetahuan dan rasa ingin tahu.
+      </p>
+      <div class="hero-cta fade-up fade-up-3">
+        <button class="btn-hero-primary" onclick="openAuthModal('register')">
+          Daftar Gratis
+        </button>
+        <a href="{{ '/edisi' | relative_url }}" class="btn-hero-secondary">
+          Lihat Edisi Majalah
+        </a>
+      </div>
+    </div>
 
-    <!-- Left: featured article -->
     {% assign featured = site.articles | where: "featured", true | first %}
     {% if featured %}
-    <a href="{{ featured.url | relative_url }}" class="hero-main" style="display:flex;flex-direction:column;text-decoration:none;color:inherit;">
-      <div class="hero-image">
+    <a href="{{ featured.url | relative_url }}" class="hero-featured fade-up fade-up-2">
+      <div class="hero-featured-img">
         {% if featured.cover_image %}
-          {% if featured.cover_image contains 'http' %}
-          <img src="{{ featured.cover_image }}" alt="{{ featured.title }}" style="object-position:{{ featured.cover_position | default: 'center center' }}">
-          {% else %}
-          <img src="{{ featured.cover_image | relative_url }}" alt="{{ featured.title }}" style="object-position:{{ featured.cover_position | default: 'center center' }}">
-          {% endif %}
-        {% else %}
-        <div class="hero-image-placeholder">
-          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-          <span>Foto Artikel</span>
-        </div>
+        <img src="{{ featured.cover_image | relative_url }}" alt="{{ featured.title }}">
         {% endif %}
+        <span class="featured-badge">Artikel Utama</span>
       </div>
-      <div class="hero-content">
-        <span class="hero-badge">Artikel Utama</span>
-        <div class="hero-eyebrow">{{ featured.rubrik }}</div>
-        <div class="hero-headline">{{ featured.title }}</div>
-        <div class="hero-deck">{{ featured.excerpt | strip_html | truncate: 160 }}</div>
-        <div class="hero-byline">Oleh {{ featured.author | default: 'Fariz Armesta' }} &middot; {{ featured.date | date: "%-d %B %Y" }}{% if featured.read_time %} &middot; {{ featured.read_time }} menit{% endif %}</div>
+      <div class="hero-featured-body">
+        <div class="hero-featured-rubrik">{{ featured.rubrik }}</div>
+        <h2 class="hero-featured-title">{{ featured.title }}</h2>
+        <p class="hero-featured-excerpt">{{ featured.excerpt | strip_html | truncate: 120 }}</p>
       </div>
     </a>
     {% endif %}
+  </div>
+</section>
 
-    <!-- Right: sidebar list -->
-    <div class="hero-sidebar">
-      <div class="sidebar-head">Juga Hari Ini</div>
-      {% assign sidebar_articles = site.articles | sort: "date" | reverse %}
-      {% for a in sidebar_articles limit: 5 %}
-      {% if a.featured != true %}
-      <a href="{{ a.url | relative_url }}" class="sidebar-story" style="display:block;text-decoration:none;color:inherit;">
-        <div class="sidebar-tag">{{ a.rubrik }}</div>
-        <div class="sidebar-title">{{ a.title }}</div>
-        <div class="sidebar-deck">{{ a.excerpt | strip_html | truncate: 80 }}</div>
+<!-- ===================== LATEST ARTICLES ===================== -->
+<section class="section-articles">
+  <div class="section-inner">
+    <div class="section-header fade-up">
+      <h2 class="section-title">Artikel <span>Terbaru</span></h2>
+      <a href="{{ '/artikel' | relative_url }}" class="section-link">Lihat semua →</a>
+    </div>
+
+    <div class="articles-grid">
+      {% assign latest = site.articles | sort: "date" | reverse | limit: 6 %}
+      {% for article in latest %}
+      <a href="{{ article.url | relative_url }}" class="article-card fade-up" data-rubrik="{{ article.rubrik | downcase | replace: ' ', '-' }}">
+        <div class="card-img">
+          {% if article.cover_image %}
+          {% if article.cover_image contains 'http' %}
+          <img src="{{ article.cover_image }}" alt="{{ article.title }}" loading="lazy" style="object-position: {{ article.cover_position | default: 'center center' }}">
+          {% else %}
+          <img src="{{ article.cover_image | relative_url }}" alt="{{ article.title }}" loading="lazy" style="object-position: {{ article.cover_position | default: 'center center' }}">
+          {% endif %}
+          {% else %}
+          <div class="card-img-placeholder">{{ article.rubrik | slice: 0 }}</div>
+          {% endif %}
+          {% if article.access == "members" %}
+          <span class="card-members-badge">Anggota</span>
+          {% endif %}
+        </div>
+        <div class="card-body">
+          <span class="card-rubrik rubrik-{{ article.rubrik | downcase | replace: ' ', '-' }}">{{ article.rubrik }}</span>
+          <h3 class="card-title">{{ article.title }}</h3>
+          <p class="card-excerpt">{{ article.excerpt | strip_html | truncate: 140 }}</p>
+          <div class="card-meta">
+            <time>{{ article.date | date: "%-d %b %Y" }}</time>
+            {% if article.read_time %}
+            <span class="card-meta-sep">·</span>
+            <span>{{ article.read_time }} menit</span>
+            {% endif %}
+          </div>
+        </div>
       </a>
-      {% endif %}
       {% endfor %}
     </div>
 
   </div>
-</div>
+</section>
 
-<!-- SLOGAN BAR -->
-<div class="slogan-bar">
-  <div class="slogan-text"><strong>Dunia berubah terlalu cepat.</strong> Tidak semua yang baru itu penting — Sophia memilihkan yang benar-benar perlu Anda ketahui.</div>
-</div>
-
-<!-- LATEST ARTICLES — 3 columns -->
-<div class="section-head">
-  <span class="section-label">Dari Redaksi</span>
-  <a href="{{ '/artikel' | relative_url }}" class="section-action">Lihat semua artikel →</a>
-</div>
-<div class="three-col">
-  {% assign latest = site.articles | sort: "date" | reverse %}
-  {% for a in latest limit: 3 %}
-  <a href="{{ a.url | relative_url }}" class="col-story" style="display:block;text-decoration:none;color:inherit;">
-    <div class="col-thumb">
-      {% if a.cover_image %}
-        {% if a.cover_image contains 'http' %}
-        <img src="{{ a.cover_image }}" alt="{{ a.title }}" loading="lazy" style="object-position:{{ a.cover_position | default: 'center center' }}">
-        {% else %}
-        <img src="{{ a.cover_image | relative_url }}" alt="{{ a.title }}" loading="lazy" style="object-position:{{ a.cover_position | default: 'center center' }}">
-        {% endif %}
-      {% else %}
-      <div class="col-thumb-placeholder">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-      </div>
-      {% endif %}
+<!-- ===================== BROWSE BY RUBRIK ===================== -->
+<section style="padding: 0 0 80px; background: var(--cream);">
+  <div class="section-inner" style="padding-top: 64px;">
+    <div class="section-header fade-up">
+      <h2 class="section-title">Jelajahi <span>Kolom</span></h2>
     </div>
-    <div class="col-tag">{{ a.rubrik }}</div>
-    <div class="col-headline">{{ a.title }}</div>
-    <div class="col-deck">{{ a.excerpt | strip_html | truncate: 120 }}</div>
-    <div class="col-byline">{{ a.author | default: 'Fariz Armesta' }}</div>
-  </a>
-  {% endfor %}
-</div>
-
-<!-- BROWSE KOLOM -->
-<div class="kolom-section">
-  <div class="kolom-label">Jelajahi Kolom</div>
-  <div class="kolom-pills">
-    <a href="{{ '/artikel' | relative_url }}?rubrik=sains" class="kolom-pill">Sains</a>
-    <a href="{{ '/artikel' | relative_url }}?rubrik=teknologi" class="kolom-pill">Teknologi</a>
-    <a href="{{ '/artikel' | relative_url }}?rubrik=budaya" class="kolom-pill">Budaya</a>
-    <a href="{{ '/artikel' | relative_url }}?rubrik=pojok-anak" class="kolom-pill">Pojok Anak</a>
-    <a href="{{ '/artikel' | relative_url }}?rubrik=tokoh-inspiratif" class="kolom-pill">Tokoh Inspiratif</a>
-    <a href="{{ '/artikel' | relative_url }}?rubrik=alam-satwa" class="kolom-pill">Alam &amp; Satwa</a>
-    <a href="{{ '/artikel' | relative_url }}?rubrik=laboratorium" class="kolom-pill">Laboratorium</a>
+    <div style="display:grid; grid-template-columns: repeat(3,1fr); gap:16px;" class="kolom-grid">
+      {% assign rubriks = "Sains,Teknologi,Budaya,Pojok Anak,Tokoh Inspiratif,Alam & Satwa" | split: "," %}
+      {% for rubrik in rubriks %}
+      {% assign slug = rubrik | downcase | replace: ' ', '-' | replace: '&', '' | replace: '--', '-' %}
+      <a href="{{ '/artikel' | relative_url }}?rubrik={{ slug }}" class="kolom-card fade-up"
+        onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='var(--shadow-md)'"
+        onmouseout="this.style.transform='';this.style.boxShadow=''">
+        <span class="card-rubrik rubrik-{{ slug }}" style="margin:0; font-size:10px; flex-shrink:0;">{{ rubrik }}</span>
+        <span style="font-family:'Playfair Display',serif; font-size:15px; font-weight:600; color:var(--navy);">{{ rubrik }}</span>
+      </a>
+      {% endfor %}
+      {% assign slug = 'laboratorium' %}
+      <a href="{{ '/artikel' | relative_url }}?rubrik={{ slug }}" class="kolom-card fade-up"
+        onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='var(--shadow-md)'"
+        onmouseout="this.style.transform='';this.style.boxShadow=''">
+        <span class="card-rubrik rubrik-{{ slug }}" style="margin:0; font-size:10px; flex-shrink:0;">Laboratorium</span>
+        <span style="font-family:'Playfair Display',serif; font-size:15px; font-weight:600; color:var(--navy);">Laboratorium</span>
+      </a>
+    </div>
   </div>
-</div>
+</section>
+<section style="padding: 80px 0; background: var(--warm-white);">
+  <div class="section-inner" style="max-width: 760px;">
+    <div class="section-header fade-up">
+      <h2 class="section-title">Pertanyaan yang <span>Sering Ditanya</span></h2>
+    </div>
+    <div id="faq-list" style="display:flex;flex-direction:column;gap:12px;">
 
-<!-- FAQ -->
-<div class="faq-section">
-  <div class="faq-heading">Pertanyaan yang <em>Sering Ditanya</em></div>
+      <details class="faq-item fade-up">
+        <summary class="faq-question">Apa itu Sophia?</summary>
+        <p class="faq-answer">Sophia adalah majalah digital berbahasa Indonesia yang membahas sains, teknologi, dan budaya. Kami hadir untuk keluarga Indonesia, khususnya orang tua dan anak-anak usia sekolah yang ingin belajar bersama-sama.</p>
+      </details>
 
-  <details class="faq-item fade-up">
-    <summary class="faq-question">Apa itu Sophia?</summary>
-    <p class="faq-answer">Sophia adalah majalah digital berbahasa Indonesia yang membahas sains, teknologi, dan budaya. Kami hadir untuk keluarga Indonesia, khususnya orang tua dan anak-anak usia sekolah yang ingin belajar bersama-sama.</p>
-  </details>
+      <details class="faq-item fade-up">
+        <summary class="faq-question">Apakah Sophia gratis?</summary>
+        <p class="faq-answer">Ya, mendaftar dan membaca artikel di Sophia sepenuhnya gratis. Kamu hanya perlu membuat akun untuk mengakses seluruh konten. Edisi majalah PDF dikirimkan langsung ke email anggota terdaftar.</p>
+      </details>
 
-  <details class="faq-item fade-up">
-    <summary class="faq-question">Apakah Sophia gratis?</summary>
-    <p class="faq-answer">Ya, mendaftar dan membaca artikel di Sophia sepenuhnya gratis. Kamu hanya perlu membuat akun untuk mengakses seluruh konten. Edisi majalah PDF dikirimkan langsung ke email anggota terdaftar.</p>
-  </details>
+      <details class="faq-item fade-up">
+        <summary class="faq-question">Siapa yang menulis artikel Sophia?</summary>
+        <p class="faq-answer">Artikel Sophia ditulis oleh Fariz Armesta, pendiri Sophia, bersama tim redaksi. Semua artikel ditulis berdasarkan fakta dan sumber yang dapat diverifikasi, tanpa spekulasi.</p>
+      </details>
 
-  <details class="faq-item fade-up">
-    <summary class="faq-question">Siapa yang menulis artikel Sophia?</summary>
-    <p class="faq-answer">Artikel Sophia ditulis oleh Fariz Armesta, pendiri Sophia, bersama tim redaksi. Semua artikel ditulis berdasarkan fakta dan sumber yang dapat diverifikasi, tanpa spekulasi.</p>
-  </details>
+      <details class="faq-item fade-up">
+        <summary class="faq-question">Seberapa sering Sophia terbit?</summary>
+        <p class="faq-answer">Sophia menerbitkan artikel secara rutin di situs ini, serta edisi majalah PDF yang terbit berkala. Daftar sebagai anggota untuk mendapatkan notifikasi setiap ada konten baru.</p>
+      </details>
 
-  <details class="faq-item fade-up">
-    <summary class="faq-question">Seberapa sering Sophia terbit?</summary>
-    <p class="faq-answer">Sophia menerbitkan artikel secara rutin di situs ini, serta edisi majalah PDF yang terbit berkala. Daftar sebagai anggota untuk mendapatkan notifikasi setiap ada konten baru.</p>
-  </details>
+      <details class="faq-item fade-up">
+        <summary class="faq-question">Apa saja topik yang dibahas Sophia?</summary>
+        <p class="faq-answer">Sophia memiliki enam kolom utama: Sains, Teknologi, Budaya, Pojok Anak, Tokoh Inspiratif, dan Alam & Satwa. Semua ditulis dalam bahasa Indonesia yang mudah dipahami oleh seluruh anggota keluarga.</p>
+      </details>
 
-  <details class="faq-item fade-up">
-    <summary class="faq-question">Apa saja topik yang dibahas Sophia?</summary>
-    <p class="faq-answer">Sophia memiliki enam kolom utama: Sains, Teknologi, Budaya, Pojok Anak, Tokoh Inspiratif, dan Alam &amp; Satwa. Semua ditulis dalam bahasa Indonesia yang mudah dipahami oleh seluruh anggota keluarga.</p>
-  </details>
+    </div>
+  </div>
+</section>
 
-</div>
-
-<!-- FAQ Schema -->
+<!-- FAQ JSON-LD Schema -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "FAQPage",
   "mainEntity": [
-    { "@type": "Question", "name": "Apa itu Sophia?", "acceptedAnswer": { "@type": "Answer", "text": "Sophia adalah majalah digital berbahasa Indonesia yang membahas sains, teknologi, dan budaya. Kami hadir untuk keluarga Indonesia, khususnya orang tua dan anak-anak usia sekolah yang ingin belajar bersama-sama." } },
-    { "@type": "Question", "name": "Apakah Sophia gratis?", "acceptedAnswer": { "@type": "Answer", "text": "Ya, mendaftar dan membaca artikel di Sophia sepenuhnya gratis. Kamu hanya perlu membuat akun untuk mengakses seluruh konten. Edisi majalah PDF dikirimkan langsung ke email anggota terdaftar." } },
-    { "@type": "Question", "name": "Siapa yang menulis artikel Sophia?", "acceptedAnswer": { "@type": "Answer", "text": "Artikel Sophia ditulis oleh Fariz Armesta, pendiri Sophia, bersama tim redaksi. Semua artikel ditulis berdasarkan fakta dan sumber yang dapat diverifikasi, tanpa spekulasi." } },
-    { "@type": "Question", "name": "Seberapa sering Sophia terbit?", "acceptedAnswer": { "@type": "Answer", "text": "Sophia menerbitkan artikel secara rutin di situs ini, serta edisi majalah PDF yang terbit berkala. Daftar sebagai anggota untuk mendapatkan notifikasi setiap ada konten baru." } },
-    { "@type": "Question", "name": "Apa saja topik yang dibahas Sophia?", "acceptedAnswer": { "@type": "Answer", "text": "Sophia memiliki enam kolom utama: Sains, Teknologi, Budaya, Pojok Anak, Tokoh Inspiratif, dan Alam & Satwa. Semua ditulis dalam bahasa Indonesia yang mudah dipahami oleh seluruh anggota keluarga." } }
+    {
+      "@type": "Question",
+      "name": "Apa itu Sophia?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sophia adalah majalah digital berbahasa Indonesia yang membahas sains, teknologi, dan budaya. Kami hadir untuk keluarga Indonesia, khususnya orang tua dan anak-anak usia sekolah yang ingin belajar bersama-sama."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Apakah Sophia gratis?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ya, mendaftar dan membaca artikel di Sophia sepenuhnya gratis. Kamu hanya perlu membuat akun untuk mengakses seluruh konten. Edisi majalah PDF dikirimkan langsung ke email anggota terdaftar."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Siapa yang menulis artikel Sophia?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Artikel Sophia ditulis oleh Fariz Armesta, pendiri Sophia, bersama tim redaksi. Semua artikel ditulis berdasarkan fakta dan sumber yang dapat diverifikasi, tanpa spekulasi."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Seberapa sering Sophia terbit?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sophia menerbitkan artikel secara rutin di situs ini, serta edisi majalah PDF yang terbit berkala. Daftar sebagai anggota untuk mendapatkan notifikasi setiap ada konten baru."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Apa saja topik yang dibahas Sophia?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sophia memiliki enam kolom utama: Sains, Teknologi, Budaya, Pojok Anak, Tokoh Inspiratif, dan Alam & Satwa. Semua ditulis dalam bahasa Indonesia yang mudah dipahami oleh seluruh anggota keluarga."
+      }
+    }
   ]
 }
 </script>
 
-<!-- SIGNUP / CTA -->
-<div class="signup-section" id="daftar">
-  <div>
-    <div class="signup-copy-head">Ikuti Sophia, ketahui yang benar-benar perlu Anda tahu.</div>
-    <div class="signup-copy-sub">Terbit berkala. Tanpa iklan untuk subscriber. Bisa dibatalkan kapan saja.</div>
+
+<section class="signup-section" id="daftar">
+  <div class="signup-inner">
+    <p class="signup-kicker fade-up">Bergabung Gratis</p>
+    <h2 class="signup-title fade-up fade-up-1">Belajar bersama <em>sekeluarga</em></h2>
+    <p class="signup-desc fade-up fade-up-2">Daftar gratis dan akses semua artikel Sophia. Edisi majalah PDF terbit rutin langsung ke emailmu.</p>
+    <div class="fade-up fade-up-3" id="signup-cta-wrap">
+      <button class="signup-btn" style="padding:14px 36px;font-size:16px;" onclick="openAuthModal('register')">
+        Daftar Sekarang! Akses Seluruh Artikel
+      </button>
+      <p id="signup-success-msg" style="display:none;color:var(--sains);font-weight:600;font-size:15px;text-align:center;margin-top:16px;"></p>
+    </div>
   </div>
-  <button class="signup-btn" onclick="openAuthModal('register')">Daftar Sekarang</button>
-</div>
+</section>

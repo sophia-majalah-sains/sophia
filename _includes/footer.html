@@ -1,22 +1,38 @@
 <footer class="site-footer">
+  <div class="footer-inner">
 
-  <div class="footer-brand">
-    <img src="{{ '/assets/images/sophia-logo-icon.png' | relative_url }}"
-         alt="Sophia" class="footer-logo-img">
-    <span class="footer-wordmark">sophia</span>
+    <div class="footer-brand">
+      <div class="footer-logo">
+        <img src="{{ '/assets/images/sophia-logo-icon.png' | relative_url }}"
+             alt="Sophia" style="width:44px;height:44px;object-fit:contain;flex-shrink:0;">
+        <div>
+          <div class="footer-logo-name">sophia</div>
+          <div class="footer-logo-tag">SAINS · TEKNOLOGI · BUDAYA</div>
+        </div>
+      </div>
+      <p class="footer-tagline">Rasa Ingin Tahu, Awal Pembelajaran</p>
+      <p class="footer-desc">Majalah digital untuk keluarga Indonesia yang ingin belajar bersama.</p>
+    </div>
+
+    <div class="footer-links">
+      <div class="footer-col">
+        <h4>Konten</h4>
+        <a href="{{ '/artikel' | relative_url }}">Semua Artikel</a>
+        <a href="{{ '/artikel?rubrik=sains' | relative_url }}">Sains</a>
+        <a href="{{ '/artikel?rubrik=teknologi' | relative_url }}">Teknologi</a>
+        <a href="{{ '/artikel?rubrik=budaya' | relative_url }}">Budaya</a>
+        <a href="{{ '/edisi' | relative_url }}">Edisi Majalah</a>
+      </div>
+      <div class="footer-col">
+        <h4>Sophia</h4>
+        <a href="{{ '/tentang' | relative_url }}">Tentang Kami</a>
+        <a href="mailto:sophia.hermosa.id@gmail.com">Kontak</a>
+        <a href="{{ '/' | relative_url }}#daftar">Daftar Gratis</a>
+      </div>
+    </div>
+
   </div>
-
-  <div class="footer-links">
-    <a href="{{ '/tentang' | relative_url }}" class="footer-link">Tentang</a>
-    <a href="{{ '/artikel' | relative_url }}" class="footer-link">Semua Artikel</a>
-    <a href="{{ '/edisi' | relative_url }}" class="footer-link">Edisi Majalah</a>
-    <a href="{{ '/artikel?rubrik=sains' | relative_url }}" class="footer-link">Sains</a>
-    <a href="{{ '/artikel?rubrik=teknologi' | relative_url }}" class="footer-link">Teknologi</a>
-    <a href="{{ '/artikel?rubrik=budaya' | relative_url }}" class="footer-link">Budaya</a>
-    <a href="mailto:{{ site.email }}" class="footer-link">Kontak</a>
-    <a href="https://karyakarsa.com/sophia" class="footer-link">Berlangganan</a>
+  <div class="footer-bottom">
+    <p>© 2026 Sophia. Untuk keluarga Indonesia.</p>
   </div>
-
-  <span class="footer-legal">© 2026 PT Sophia Wawasan Nusantara</span>
-
 </footer>
