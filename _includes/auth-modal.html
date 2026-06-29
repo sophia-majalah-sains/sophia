@@ -4,7 +4,7 @@
   <button class="auth-close" onclick="closeAuthModal()" aria-label="Tutup">&times;</button>
 
   <div class="auth-brand">
-    <div class="auth-logo">S</div>
+    <img src="{{ '/assets/images/sophia-logo-icon.png' | relative_url }}" alt="Sophia" class="auth-logo">
     <span class="auth-logo-name">sophia</span>
   </div>
 
@@ -24,8 +24,8 @@
       <p class="auth-error" id="login-error"></p>
       <button class="btn-auth-submit" onclick="handleLogin()">Log In</button>
     </div>
-    <p class="auth-switch" style="margin-top:12px">
-      <a href="#" onclick="switchPanel('forgot'); return false;" style="color:var(--text-lighter);font-size:12px">Lupa password?</a>
+    <p class="auth-switch" style="margin-top:10px">
+      <a href="#" onclick="switchPanel('forgot'); return false;" style="color:var(--muted);font-size:12px">Lupa password?</a>
     </p>
     <p class="auth-switch">Belum punya akun? <a href="#" onclick="switchPanel('register'); return false;">Daftar gratis</a></p>
   </div>
@@ -73,10 +73,10 @@
     <div class="auth-success-icon">✓</div>
     <h2 class="auth-title">Berhasil!</h2>
     <p class="auth-subtitle" id="success-message">Kamu sudah masuk ke Sophia.</p>
-    <div style="text-align:center; margin-top:20px;">
-      <button class="btn-auth-submit" style="display:inline-block;width:auto;padding:12px 32px;" onclick="closeAuthModal()">Lanjut Membaca</button>
+    <div style="text-align:center;margin-top:18px;">
+      <button class="btn-auth-submit" style="display:inline-block;width:auto;padding:11px 28px;" onclick="closeAuthModal()">Lanjut Membaca</button>
     </div>
-    <p style="font-size:12px;color:var(--text-lighter);text-align:center;margin-top:12px" id="success-countdown"></p>
+    <p style="font-size:12px;color:var(--muted);text-align:center;margin-top:10px" id="success-countdown"></p>
   </div>
 
   <!-- DELETE ACCOUNT CONFIRM PANEL -->
@@ -86,7 +86,7 @@
     <p class="auth-subtitle">Akun kamu akan dihapus permanen. Data tidak bisa dipulihkan. Kamu yakin?</p>
     <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px">
       <button class="btn-auth-delete btn-auth-submit" style="background:#CC3333;" onclick="handleDeleteAccount()">Ya, Hapus Akun Saya</button>
-      <button class="btn-auth-submit" style="background:transparent;color:var(--navy);border:1.5px solid var(--border);" onclick="closeAuthModal()">Batal</button>
+      <button class="btn-auth-submit" style="background:transparent;color:var(--black);border:1.5px solid var(--border);" onclick="closeAuthModal()">Batal</button>
     </div>
   </div>
 
@@ -95,14 +95,13 @@
     <h2 class="auth-title">Profil Saya</h2>
     <p class="auth-subtitle" id="profile-email-display"></p>
     <div class="auth-form">
-      <!-- Avatar -->
       <div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:8px">
-        <div id="profile-avatar-preview" style="width:72px;height:72px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--cream);overflow:hidden;flex-shrink:0">
+        <div id="profile-avatar-preview" style="width:64px;height:64px;border-radius:50%;background:var(--black);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:24px;font-weight:700;color:var(--white);overflow:hidden;flex-shrink:0">
           <span id="profile-avatar-initial"></span>
         </div>
-        <button class="btn-secondary" style="font-size:12px;padding:6px 14px" onclick="document.getElementById('avatar-upload').click()">Ganti Foto</button>
+        <button class="btn-secondary" onclick="document.getElementById('avatar-upload').click()">Ganti Foto</button>
         <input type="file" id="avatar-upload" accept="image/*" style="display:none" onchange="previewAvatar(this)">
-        <span style="font-size:11px;color:var(--text-lighter)">Maks 1MB, JPG/PNG</span>
+        <span style="font-size:11px;color:var(--muted)">Maks 1MB, JPG/PNG</span>
       </div>
       <div class="form-group">
         <label for="profile-name">Nama</label>
@@ -116,14 +115,11 @@
       <p class="auth-error" id="profile-error"></p>
       <button class="btn-auth-submit" id="profile-save-btn" onclick="handleSaveProfile()">Simpan Perubahan</button>
     </div>
-
-    <!-- Recently read -->
-    <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border);">
-      <div style="font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-lighter);margin-bottom:12px;">Terakhir Dibaca</div>
-      <div id="recently-read-list" style="display:flex;flex-direction:column;gap:8px;max-height:200px;overflow-y:auto;"></div>
+    <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
+      <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Terakhir Dibaca</div>
+      <div id="recently-read-list" style="display:flex;flex-direction:column;gap:6px;max-height:180px;overflow-y:auto;"></div>
     </div>
-
-    <p class="auth-switch" style="margin-top:16px">
+    <p class="auth-switch" style="margin-top:14px">
       <a href="#" onclick="switchPanel('delete-confirm'); return false;" style="color:#CC3333;font-size:12px">Hapus akun saya</a>
     </p>
   </div>

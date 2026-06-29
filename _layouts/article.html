@@ -4,6 +4,12 @@ layout: default
 
 {% assign rubrik_slug = page.rubrik | downcase | replace: ' ', '-' | replace: '&', '' | replace: '--', '-' %}
 
+<<<<<<< HEAD
+=======
+<!-- Reading progress bar -->
+<div class="reading-progress-bar"><div class="reading-progress-fill" id="progressFill"></div></div>
+
+>>>>>>> c39bce6 (New style)
 <!-- NewsArticle Schema -->
 <script type="application/ld+json">
 {
@@ -25,9 +31,13 @@ layout: default
     "url": "https://discoversophia.id",
     "logo": {
       "@type": "ImageObject",
+<<<<<<< HEAD
       "url": "https://discoversophia.id/assets/images/logo-sophia.png",
       "width": 200,
       "height": 60
+=======
+      "url": "https://discoversophia.id/assets/images/sophia-logo-icon.png"
+>>>>>>> c39bce6 (New style)
     }
   }{% if page.cover_image %},
   "image": {
@@ -43,30 +53,186 @@ layout: default
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position": 1,
-      "name": "Home",
-      "item": "https://discoversophia.id"
-    },
-    {
-      "@type": "ListItem",
-      "position": 2,
-      "name": "Artikel",
-      "item": "https://discoversophia.id/artikel"
-    },
-    {
-      "@type": "ListItem",
-      "position": 3,
-      "name": "{{ page.rubrik }}",
-      "item": "https://discoversophia.id/artikel?rubrik={{ rubrik_slug }}"
-    },
-    {
-      "@type": "ListItem",
-      "position": 4,
-      "name": "{{ page.title | escape }}",
-      "item": "{{ page.url | absolute_url }}"
-    }
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://discoversophia.id" },
+    { "@type": "ListItem", "position": 2, "name": "Artikel", "item": "https://discoversophia.id/artikel" },
+    { "@type": "ListItem", "position": 3, "name": "{{ page.rubrik }}", "item": "https://discoversophia.id/artikel?rubrik={{ rubrik_slug }}" },
+    { "@type": "ListItem", "position": 4, "name": "{{ page.title | escape }}", "item": "{{ page.url | absolute_url }}" }
   ]
 }
 </script>
+<<<<<<< HEAD
+=======
+
+<div class="article-page">
+<div class="article-wrap">
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <a href="{{ '/' | relative_url }}">Beranda</a><span>›</span>
+    <a href="{{ '/artikel' | relative_url }}">Artikel</a><span>›</span>
+    <a href="{{ '/artikel' | relative_url }}?rubrik={{ rubrik_slug }}">{{ page.rubrik }}</a>
+  </div>
+
+  <!-- Article Header -->
+  <div class="article-header">
+    {% if page.rubrik == 'Cover Story' %}<span class="article-badge">Cover Story</span>{% endif %}
+    <div class="article-rubrik-line">
+      <span class="article-rubrik">{{ page.rubrik }}</span>
+      {% if page.edisi %}
+      <span class="article-rubrik-dot"></span>
+      <span class="edisi-tag">Edisi {{ page.edisi }}</span>
+      {% endif %}
+    </div>
+    <h1 class="article-title">{{ page.title }}</h1>
+    {% if page.subtitle %}
+    <div class="article-subtitle">{{ page.subtitle }}</div>
+    {% endif %}
+    <div class="article-byline-row">
+      <div class="article-byline">Oleh <span>{{ page.author | default: 'Fariz Armesta' }}</span> &middot; Sophia</div>
+      <div class="article-meta-line">
+        {{ page.date | date: "%-d %B %Y" }}
+        {% if page.read_time %}<span class="article-meta-sep">·</span>{{ page.read_time }} menit baca{% endif %}
+      </div>
+      {% if page.access == 'members' %}
+      <span class="ar-access">Anggota</span>
+      {% endif %}
+    </div>
+    <div class="share-row">
+      <span class="share-label">Bagikan:</span>
+      <button class="share-btn" onclick="window.open('https://www.instagram.com/','_blank')">Instagram</button>
+      <button class="share-btn" onclick="window.open('https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent(document.title),'_blank')">X / Twitter</button>
+      <button class="share-btn" onclick="window.open('https://wa.me/?text='+encodeURIComponent(document.title+' '+window.location.href),'_blank')">WhatsApp</button>
+      <button class="share-btn" onclick="window.open('https://t.me/share/url?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent(document.title),'_blank')">Telegram</button>
+      <button class="share-btn" onclick="navigator.clipboard.writeText(window.location.href).then(function(){this.textContent='Tersalin!';setTimeout(function(){},1200)}.bind(this))">Salin Tautan</button>
+    </div>
+  </div>
+
+  <!-- Cover Image -->
+  {% if page.cover_image %}
+  <div class="cover-image-full">
+    {% if page.cover_image contains 'http' %}
+    <img src="{{ page.cover_image }}" alt="{{ page.title }}" style="object-position: {{ page.cover_position | default: 'center center' }}">
+    {% else %}
+    <img src="{{ page.cover_image | relative_url }}" alt="{{ page.title }}" style="object-position: {{ page.cover_position | default: 'center center' }}">
+    {% endif %}
+  </div>
+  {% else %}
+  <div class="cover-image-full">
+    <div class="cover-image-placeholder">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+      <span>Foto Artikel</span>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Body Layout -->
+  <div class="article-body-layout">
+
+    <article class="article-body">
+
+      {% if page.access == 'members' %}
+        {% assign user_logged_in = false %}
+        <div class="article-content article-teaser" id="article-content">
+          {{ content }}
+        </div>
+        <div class="article-paywall" id="article-paywall">
+          <div class="paywall-blur"></div>
+          <div class="paywall-card">
+            <div class="paywall-title">Lanjutkan Membaca</div>
+            <div class="paywall-desc">Artikel ini tersedia untuk anggota Sophia. Daftar gratis untuk mengakses seluruh artikel.</div>
+            <div class="paywall-actions">
+              <button class="btn-paywall-login" onclick="openAuthModal('login')">Log In</button>
+              <button class="btn-paywall-register" onclick="openAuthModal('register')">Daftar Gratis</button>
+            </div>
+            <div class="paywall-note">Sudah punya akun? <a href="#" onclick="openAuthModal('login');return false;" style="color:var(--red);font-weight:600;">Masuk di sini</a></div>
+          </div>
+        </div>
+      {% else %}
+        <div class="article-content" id="article-content">
+          {{ content }}
+        </div>
+      {% endif %}
+
+      <!-- Tags -->
+      {% if page.tags %}
+      <div class="article-tags">
+        <span class="tags-label">Tag:</span>
+        {% for tag in page.tags %}
+        <span class="article-tag">{{ tag }}</span>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <a href="{{ '/artikel' | relative_url }}" class="back-to-articles">← Kembali ke semua artikel</a>
+
+      <!-- CTA -->
+      <div class="article-cta-box">
+        <div class="cta-head">Ikuti Sophia</div>
+        <div class="cta-body">Dapatkan artikel pilihan tentang sains, teknologi, dan budaya yang benar-benar penting untuk keluarga Indonesia. Terbit berkala. Tanpa iklan untuk subscriber.</div>
+        <a href="https://karyakarsa.com/sophia" class="cta-btn">Ikuti Sophia →</a>
+      </div>
+
+    </article>
+
+    <!-- Sidebar -->
+    <aside class="article-sidebar">
+
+      <div class="asb-block">
+        <div class="asb-label">Artikel Lainnya</div>
+        {% assign other_articles = site.articles | sort: 'date' | reverse %}
+        {% for a in other_articles limit: 5 %}
+        {% unless a.url == page.url %}
+        <div class="related-item">
+          <div class="related-tag">{{ a.rubrik }}</div>
+          <a href="{{ a.url | relative_url }}">
+            <div class="related-title">{{ a.title }}</div>
+          </a>
+          <div class="related-meta">
+            {{ a.date | date: "%-d %b %Y" }}{% if a.read_time %} · {{ a.read_time }} menit{% endif %}{% if a.access == 'members' %}<span class="related-access">Anggota</span>{% endif %}
+          </div>
+        </div>
+        {% endunless %}
+        {% endfor %}
+      </div>
+
+      <div class="asb-block">
+        <div class="asb-subscribe">
+          <div class="asb-sub-head">Ikuti Sophia</div>
+          <div class="asb-sub-body">Terbit berkala. Tanpa iklan untuk subscriber.</div>
+          <a href="https://karyakarsa.com/sophia" class="asb-sub-btn">Berlangganan →</a>
+        </div>
+      </div>
+
+    </aside>
+  </div>
+
+</div>
+</div>
+
+<script>
+// Reading progress
+window.addEventListener('scroll', function() {
+  var content = document.getElementById('article-content');
+  if (!content) return;
+  var rect = content.getBoundingClientRect();
+  var total = content.offsetHeight;
+  var scrolled = Math.max(0, -rect.top);
+  var pct = Math.min(100, (scrolled / total) * 100);
+  var fill = document.getElementById('progressFill');
+  if (fill) fill.style.width = pct + '%';
+}, { passive: true });
+
+// Paywall: check if user is logged in
+document.addEventListener('DOMContentLoaded', function() {
+  var paywall = document.getElementById('article-paywall');
+  var teaser = document.getElementById('article-content');
+  if (!paywall) return;
+  var session = null;
+  try { session = JSON.parse(localStorage.getItem('sophia_sb_session')); } catch(e) {}
+  if (session && session.access_token) {
+    paywall.style.display = 'none';
+    if (teaser) teaser.classList.remove('article-teaser');
+  }
+});
+</script>
+>>>>>>> c39bce6 (New style)

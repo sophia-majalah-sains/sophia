@@ -1,0 +1,86 @@
+---
+layout: default
+title: Semua Artikel
+permalink: /artikel/
+---
+
+<div class="articles-page">
+
+  <div class="articles-page-header">
+    <div class="section-inner">
+      <h1 class="fade-up">Semua Artikel</h1>
+      <p class="fade-up fade-up-1">Sains, teknologi, dan budaya untuk keluarga Indonesia</p>
+    </div>
+  </div>
+
+  <div class="articles-listing">
+    <div class="section-inner">
+
+      <!-- Search + Kolom filters -->
+      <div class="artikel-search-bar fade-up" style="margin-bottom:20px;">
+        <div style="position:relative;">
+          <svg style="position:absolute;left:14px;top:50%;transform:translateY(-50%);opacity:0.4;pointer-events:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="artikel-search-input" class="search-input"
+            style="padding-left:40px;width:100%;max-width:400px"
+            placeholder="Cari artikel..." autocomplete="off"
+            oninput="filterArticlesBySearch(this.value)">
+        </div>
+      </div>
+
+      <!-- Kolom filters -->
+      <div class="rubrik-filters fade-up">
+        <button class="rubrik-filter active" data-filter="semua">Semua</button>
+        <button class="rubrik-filter" data-filter="sains">Sains</button>
+        <button class="rubrik-filter" data-filter="teknologi">Teknologi</button>
+        <button class="rubrik-filter" data-filter="budaya">Budaya</button>
+        <button class="rubrik-filter" data-filter="pojok-anak">Pojok Anak</button>
+        <button class="rubrik-filter" data-filter="tokoh-inspiratif">Tokoh Inspiratif</button>
+        <button class="rubrik-filter" data-filter="alam-satwa">Alam &amp; Satwa</button>
+        <button class="rubrik-filter" data-filter="laboratorium">Laboratorium</button>
+        <button class="rubrik-filter" data-filter="cover-story">Cover Story</button>
+      </div>
+
+      <!-- Article grid -->
+      <div class="articles-grid">
+        {% assign all_articles = site.articles | sort: "date" | reverse %}
+        {% for article in all_articles %}
+        <a href="{{ article.url | relative_url }}" class="article-card fade-up"
+           data-rubrik="{{ article.rubrik | downcase | replace: ' ', '-' | replace: '&', '' | replace: '--', '-' }}">
+          <div class="card-img">
+            {% if article.cover_image %}
+            {% if article.cover_image contains 'http' %}
+            <img src="{{ article.cover_image }}" alt="{{ article.title }}" loading="lazy" style="object-position: {{ article.cover_position | default: 'center center' }}">
+            {% else %}
+            <img src="{{ article.cover_image | relative_url }}" alt="{{ article.title }}" loading="lazy" style="object-position: {{ article.cover_position | default: 'center center' }}">
+            {% endif %}
+            {% else %}
+            <div class="card-img-placeholder">{{ article.rubrik | slice: 0 }}</div>
+            {% endif %}
+            {% if article.access == "members" %}
+            <span class="card-members-badge">Anggota</span>
+            {% endif %}
+          </div>
+          <div class="card-body">
+            <span class="card-rubrik rubrik-{{ article.rubrik | downcase | replace: ' ', '-' | replace: '&', '' | replace: '--', '-' }}">{{ article.rubrik }}</span>
+            <h2 class="card-title">{{ article.title }}</h2>
+            <p class="card-excerpt">{{ article.excerpt | strip_html | truncate: 140 }}</p>
+            <div class="card-meta">
+              <time>{{ article.date | date: "%-d %b %Y" }}</time>
+              {% if article.read_time %}
+              <span class="card-meta-sep">·</span>
+              <span>{{ article.read_time }} menit</span>
+              {% endif %}
+              {% if article.edisi %}
+              <span class="card-meta-sep">·</span>
+              <span>Edisi {{ article.edisi }}</span>
+              {% endif %}
+            </div>
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+
+    </div>
+  </div>
+
+</div>

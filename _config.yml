@@ -11,6 +11,12 @@ markdown: kramdown
 highlighter: rouge
 permalink: /artikel/:slug/
 
+# Allow raw HTML inside markdown (needed for Laboratorium code blocks)
+kramdown:
+  input: GFM
+  hard_wrap: false
+  parse_block_html: true
+
 collections:
   articles:
     output: true

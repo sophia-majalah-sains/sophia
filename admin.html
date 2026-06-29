@@ -482,6 +482,7 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
         <button class="sidebar-link" onclick="filterByRubrik('Pojok Anak')"><span class="rubrik-dot dot-pojok-anak"></span>Pojok Anak</button>
         <button class="sidebar-link" onclick="filterByRubrik('Tokoh Inspiratif')"><span class="rubrik-dot dot-tokoh-inspiratif"></span>Tokoh</button>
         <button class="sidebar-link" onclick="filterByRubrik('Alam & Satwa')"><span class="rubrik-dot dot-alam-satwa"></span>Alam & Satwa</button>
+        <button class="sidebar-link" onclick="filterByRubrik('Laboratorium')"><span class="rubrik-dot" style="background:#7B3FBE"></span>Laboratorium</button>
         <button class="sidebar-link" onclick="filterByRubrik('Cover Story')"><span class="rubrik-dot dot-cover-story"></span>Cover Story</button>
       </div>
     </div>
@@ -584,6 +585,11 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
               <div class="toolbar-sep"></div>
               <button class="toolbar-btn" onclick="openInlineImagePicker()" title="Sisipkan gambar" style="color:var(--navy);font-weight:600">🖼 Sisipkan Gambar</button>
               <div class="toolbar-sep"></div>
+              <button class="toolbar-btn" onclick="insertLabCode()" title="Sisipkan blok kode" style="color:#7B3FBE;font-weight:700">⌨ Kode</button>
+              <button class="toolbar-btn" onclick="insertLabOutput()" title="Sisipkan blok output" style="color:#7B3FBE;font-weight:700">▶ Output</button>
+              <button class="toolbar-btn" onclick="insertLabNote()" title="Sisipkan catatan/penjelasan" style="color:#7B3FBE;font-weight:700">💡 Catatan</button>
+              <button class="toolbar-btn" onclick="insertLabTable()" title="Sisipkan tabel data" style="color:#7B3FBE;font-weight:700">⊞ Tabel</button>
+              <div class="toolbar-sep"></div>
               <span style="font-size:11px;color:var(--text-lighter);margin-left:4px">Format: Markdown</span>
             </div>
             <textarea class="editor-title-input" id="ed-title" placeholder="Judul artikel..." rows="2" oninput="autoResize(this)"></textarea>
@@ -613,6 +619,7 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
                   <option value="Pojok Anak">Pojok Anak</option>
                   <option value="Tokoh Inspiratif">Tokoh Inspiratif</option>
                   <option value="Alam & Satwa">Alam & Satwa</option>
+                  <option value="Laboratorium">Laboratorium</option>
                 </select>
               </div>
               <div class="field">
@@ -1708,6 +1715,49 @@ async function deleteArticle(filename) {
 // ══════════════════════════════════════════════════════════════
 // MARKDOWN TOOLBAR HELPERS
 // ══════════════════════════════════════════════════════════════
+
+// ── Laboratorium block insertions ──
+
+function insertLabCode() {
+  const lang = prompt('Bahasa pemrograman? (python / r / sql / javascript)', 'python') || 'python';
+  const snippet = `\n<div class="lab-code-wrap">\n<div class="lab-code-header"><div class="lab-code-dots"><span></span><span></span><span></span></div><span class="lab-code-lang">${lang}</span></div>\n<pre class="lab-code-body"><code># Tulis kode kamu di sini\nprint("Halo, Sophia!")\n</code></pre>\n</div>\n`;
+  insertAtCursor(snippet);
+  showToast('Blok kode disisipkan', 'success');
+}
+
+function insertLabOutput() {
+  const type = prompt('Tipe output?\n1 = teks/angka\n2 = gambar/chart\nKetik 1 atau 2', '1');
+  let snippet;
+  if (type === '2') {
+    snippet = `\n<div class="lab-output-wrap">\n<div class="lab-output-header"><span class="lab-output-icon">▶</span><span class="lab-output-label">Output</span></div>\n<div class="lab-output-body lab-output-img"><img src="URL_GAMBAR_CHART_KAMU" alt="Chart output"></div>\n</div>\n`;
+  } else {
+    snippet = `\n<div class="lab-output-wrap">\n<div class="lab-output-header"><span class="lab-output-icon">▶</span><span class="lab-output-label">Output</span></div>\n<pre class="lab-output-body">Hasil output di sini...\n</pre>\n</div>\n`;
+  }
+  insertAtCursor(snippet);
+  showToast('Blok output disisipkan', 'success');
+}
+
+function insertLabNote() {
+  const snippet = `\n<div class="lab-note"><span class="lab-note-icon">💡</span><p>Penjelasan singkat tentang kode atau hasil di atas. Tulis dalam bahasa yang mudah dipahami pembaca awam.</p></div>\n`;
+  insertAtCursor(snippet);
+  showToast('Blok catatan disisipkan', 'success');
+}
+
+function insertLabTable() {
+  const snippet = `\n<div class="lab-output-wrap">\n<div class="lab-output-header"><span class="lab-output-icon">⊞</span><span class="lab-output-label">Data</span></div>\n<div class="lab-output-body" style="padding:0">\n<div class="lab-table-wrap">\n<table class="lab-table">\n<thead><tr><th>Kolom 1</th><th>Kolom 2</th><th>Kolom 3</th></tr></thead>\n<tbody>\n<tr><td>Data A</td><td>100</td><td>45%</td></tr>\n<tr><td>Data B</td><td>200</td><td>55%</td></tr>\n</tbody>\n</table>\n</div>\n</div>\n</div>\n`;
+  insertAtCursor(snippet);
+  showToast('Tabel data disisipkan', 'success');
+}
+
+function insertAtCursor(text) {
+  const ta = document.getElementById('ed-content');
+  const pos = ta.selectionStart;
+  ta.value = ta.value.slice(0, pos) + text + ta.value.slice(pos);
+  ta.focus();
+  ta.selectionStart = ta.selectionEnd = pos + text.length;
+}
+
+// ── End Laboratorium ──
 
 function fmt(cmd) {
   const ta = document.getElementById('ed-content');
