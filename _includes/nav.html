@@ -1,57 +1,56 @@
 <nav class="site-nav" id="site-nav">
-  <div class="nav-inner">
 
-    <a href="{{ '/' | relative_url }}" class="nav-brand">
-      <img src="{{ '/assets/images/sophia-logo-new.png' | relative_url }}"
-           alt="Sophia" class="nav-logo-img">
-      <div class="nav-brand-text">
-        <span class="nav-name">sophia</span>
-        <span class="nav-tagline">SAINS · TEKNOLOGI · BUDAYA</span>
-      </div>
-    </a>
+  <a href="{{ '/' | relative_url }}" class="nav-item {% if page.url == '/' %}active{% endif %}">Beranda</a>
+  <a href="{{ '/artikel' | relative_url }}" class="nav-item {% if page.url contains '/artikel' %}active{% endif %}">Artikel</a>
+  <a href="{{ '/artikel?rubrik=sains' | relative_url }}" class="nav-item">Sains</a>
+  <a href="{{ '/artikel?rubrik=teknologi' | relative_url }}" class="nav-item">Teknologi</a>
+  <a href="{{ '/artikel?rubrik=budaya' | relative_url }}" class="nav-item">Budaya</a>
+  <a href="{{ '/artikel?rubrik=pojok-anak' | relative_url }}" class="nav-item">Pojok Anak</a>
+  <a href="{{ '/tentang' | relative_url }}" class="nav-item {% if page.url contains '/tentang' %}active{% endif %}">Tentang</a>
 
-    <div class="nav-links" id="nav-links">
-      <a href="{{ '/' | relative_url }}" class="nav-link {% if page.url == '/' %}active{% endif %}">Home</a>
-      <a href="{{ '/artikel' | relative_url }}" class="nav-link {% if page.url contains '/artikel' %}active{% endif %}">Artikel</a>
-      <a href="{{ '/tentang' | relative_url }}" class="nav-link {% if page.url contains '/tentang' %}active{% endif %}">Tentang</a>
+  <span class="nav-spacer"></span>
+
+  <!-- Search -->
+  <div class="nav-search-wrap" id="nav-search-wrap">
+    <button class="nav-search-btn" onclick="toggleNavSearch()" aria-label="Cari">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    </button>
+    <div class="nav-search-box" id="nav-search-box" style="display:none;">
+      <input type="text" id="nav-search-input" class="nav-search-input"
+        placeholder="Cari artikel..." autocomplete="off"
+        oninput="handleNavSearch(this.value)"
+        onkeydown="if(event.key==='Escape')toggleNavSearch()">
+      <div class="nav-search-results" id="nav-search-results"></div>
     </div>
-
-    <div class="nav-search-wrap" id="nav-search-wrap">
-      <button class="nav-search-btn" onclick="toggleNavSearch()" aria-label="Cari">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      </button>
-      <div class="nav-search-box" id="nav-search-box" style="display:none;">
-        <input type="text" id="nav-search-input" class="nav-search-input" placeholder="Cari artikel..." autocomplete="off"
-          oninput="handleNavSearch(this.value)" onkeydown="if(event.key==='Escape')toggleNavSearch()">
-        <div class="nav-search-results" id="nav-search-results"></div>
-      </div>
-    </div>
-
-    <div class="nav-actions">
-      <div id="nav-auth-guest" class="nav-auth-guest">
-        <button class="btn-nav-login" onclick="openAuthModal('login')">Log In</button>
-        <button class="btn-nav-register" onclick="openAuthModal('register')">Daftar</button>
-      </div>
-      <div id="nav-auth-user" class="nav-auth-user" style="display:none;">
-        <div class="nav-user-dropdown">
-          <button class="nav-user-btn" onclick="toggleUserDropdown()" id="nav-user-btn">
-            <span class="nav-user-avatar" id="nav-user-avatar">S</span>
-            <span class="nav-user-name" id="nav-user-name"></span>
-            <span style="font-size:10px;opacity:0.5">▾</span>
-          </button>
-          <div class="nav-user-menu" id="nav-user-menu" style="display:none;">
-            <div class="nav-user-menu-email" id="nav-user-menu-email"></div>
-            <div class="nav-user-menu-divider"></div>
-            <button class="nav-user-menu-item" onclick="toggleUserDropdown();openProfile()">Profil Saya</button>
-            <button class="nav-user-menu-item" onclick="logoutUser()">Keluar</button>
-            <button class="nav-user-menu-item danger" onclick="toggleUserDropdown();showDeleteConfirm()">Hapus Akun</button>
-          </div>
-        </div>
-      </div>
-      <button class="nav-hamburger" id="nav-hamburger" aria-label="Menu" onclick="toggleMobileNav()">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
-
   </div>
+
+  <!-- Auth: guest -->
+  <div id="nav-auth-guest" class="nav-auth-guest">
+    <button class="btn-nav-login" onclick="openAuthModal('login')">Log In</button>
+    <button class="btn-nav-register" onclick="openAuthModal('register')">Daftar</button>
+  </div>
+
+  <!-- Auth: logged-in user -->
+  <div id="nav-auth-user" class="nav-auth-user" style="display:none;">
+    <div class="nav-user-dropdown">
+      <button class="nav-user-btn" onclick="toggleUserDropdown()" id="nav-user-btn">
+        <span class="nav-user-avatar" id="nav-user-avatar">S</span>
+        <span class="nav-user-name" id="nav-user-name"></span>
+        <span style="font-size:9px;opacity:.5;margin-left:2px;">▾</span>
+      </button>
+      <div class="nav-user-menu" id="nav-user-menu" style="display:none;">
+        <div class="nav-user-menu-email" id="nav-user-menu-email"></div>
+        <div class="nav-user-menu-divider"></div>
+        <button class="nav-user-menu-item" onclick="toggleUserDropdown();openProfile()">Profil Saya</button>
+        <button class="nav-user-menu-item" onclick="logoutUser()">Keluar</button>
+        <button class="nav-user-menu-item danger" onclick="toggleUserDropdown();showDeleteConfirm()">Hapus Akun</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hamburger (mobile) -->
+  <button class="nav-hamburger" id="nav-hamburger" aria-label="Menu" onclick="toggleMobileNav()">
+    <span></span><span></span><span></span>
+  </button>
+
 </nav>
