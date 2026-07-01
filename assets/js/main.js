@@ -2,86 +2,29 @@
 // SOPHIA — main.js
 // ============================================================
 
-// ---- Sticky nav scroll effect ----
-(function() {
+// ---- Mobile nav ----
+function toggleMobileNav() {
   var nav = document.getElementById('site-nav');
   if (!nav) return;
-  window.addEventListener('scroll', function() {
-    if (window.scrollY > 20) {
-      nav.classList.add('scrolled');
-    } else {
-      nav.classList.remove('scrolled');
-    }
-  }, { passive: true });
-})();
-
-// ---- Nav Search ----
-var _searchIndex = null;
-var _searchOpen = false;
-
-async function loadSearchIndex() {
-  if (_searchIndex) return;
-  try {
-    var base = document.querySelector('base') ? document.querySelector('base').href : '';
-    var res = await fetch('/search-index.json');
-    if (res.ok) _searchIndex = await res.json();
-  } catch(e) { _searchIndex = []; }
+  nav.classList.toggle('mobile-open');
 }
 
-function toggleNavSearch() {
-  _searchOpen = !_searchOpen;
-  var box = document.getElementById('nav-search-box');
-  if (!box) return;
-  box.style.display = _searchOpen ? 'block' : 'none';
-  if (_searchOpen) {
-    loadSearchIndex();
-    setTimeout(function() {
-      var inp = document.getElementById('nav-search-input');
-      if (inp) inp.focus();
-    }, 50);
-  }
-}
-
-function handleNavSearch(q) {
-  var results = document.getElementById('nav-search-results');
-  if (!results) return;
-  q = (q || '').trim().toLowerCase();
-  if (!q || !_searchIndex) { results.innerHTML = ''; return; }
-
-  var matches = _searchIndex.filter(function(a) {
-    return (a.title || '').toLowerCase().includes(q) ||
-           (a.excerpt || '').toLowerCase().includes(q) ||
-           (a.rubrik || '').toLowerCase().includes(q);
-  }).slice(0, 6);
-
-  if (!matches.length) {
-    results.innerHTML = '<div class="search-empty">Tidak ada hasil untuk "' + q + '"</div>';
-    return;
-  }
-
-  results.innerHTML = matches.map(function(a) {
-    return '<a class="nav-search-result" href="' + a.url + '" onclick="toggleNavSearch()">' +
-      '<span class="search-result-rubrik">' + (a.rubrik || '') + '</span>' +
-      '<span class="search-result-title">' + (a.title || '') + '</span>' +
-      '<span class="search-result-excerpt">' + (a.excerpt || '') + '</span>' +
-      '</a>';
-  }).join('');
-}
-
-// Close search on outside click
 document.addEventListener('click', function(e) {
-  var wrap = document.getElementById('nav-search-wrap');
-  if (wrap && !wrap.contains(e.target) && _searchOpen) toggleNavSearch();
+  var nav = document.getElementById('site-nav');
+  var hamburger = document.getElementById('nav-hamburger');
+  if (!nav || !hamburger) return;
+  if (!nav.contains(e.target)) {
+    nav.classList.remove('mobile-open');
+  }
 });
 
-
+// ---- User dropdown ----
 function toggleUserDropdown() {
   var menu = document.getElementById('nav-user-menu');
   if (!menu) return;
   menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
 }
 
-// Close dropdown on outside click
 document.addEventListener('click', function(e) {
   var btn  = document.getElementById('nav-user-btn');
   var menu = document.getElementById('nav-user-menu');
@@ -91,57 +34,83 @@ document.addEventListener('click', function(e) {
   }
 });
 
-
-function toggleMobileNav() {
-  var links = document.getElementById('nav-links');
-  if (!links) return;
-  links.classList.toggle('mobile-open');
+// ---- Nav search ----
+function toggleNavSearch() {
+  var box = document.getElementById('nav-search-box');
+  if (!box) return;
+  var isOpen = box.style.display !== 'none';
+  box.style.display = isOpen ? 'none' : 'block';
+  if (!isOpen) {
+    var input = document.getElementById('nav-search-input');
+    if (input) { input.value = ''; input.focus(); }
+    var results = document.getElementById('nav-search-results');
+    if (results) results.innerHTML = '';
+  }
 }
 
-// Close mobile nav on outside click
 document.addEventListener('click', function(e) {
-  var links = document.getElementById('nav-links');
-  var hamburger = document.getElementById('nav-hamburger');
-  if (!links || !hamburger) return;
-  if (!links.contains(e.target) && !hamburger.contains(e.target)) {
-    links.classList.remove('mobile-open');
+  var wrap = document.getElementById('nav-search-wrap');
+  if (!wrap) return;
+  if (!wrap.contains(e.target)) {
+    var box = document.getElementById('nav-search-box');
+    if (box) box.style.display = 'none';
   }
 });
 
-// ---- Artikel page search (works with rubrik filter) ----
-var _activeRubrik = 'semua';
-var _activeSearch = '';
+function handleNavSearch(query) {
+  var results = document.getElementById('nav-search-results');
+  if (!results) return;
+  query = query.trim().toLowerCase();
+  if (!query) { results.innerHTML = ''; return; }
 
-function filterArticlesBySearch(q) {
-  _activeSearch = (q || '').trim().toLowerCase();
-  applyArticleFilters();
+  // Search from search-index.json
+  if (window._searchIndex) {
+    renderNavSearchResults(query, results);
+    return;
+  }
+  fetch('/search-index.json')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      window._searchIndex = data;
+      renderNavSearchResults(query, results);
+    })
+    .catch(function() { results.innerHTML = ''; });
 }
 
-function applyArticleFilters() {
-  var cards = document.querySelectorAll('.article-card[data-rubrik]');
-  cards.forEach(function(card) {
-    var rubrikMatch = _activeRubrik === 'semua' || card.getAttribute('data-rubrik') === _activeRubrik;
-    var text = (card.textContent || '').toLowerCase();
-    var searchMatch = !_activeSearch || text.includes(_activeSearch);
-    card.style.display = (rubrikMatch && searchMatch) ? '' : 'none';
-  });
+function renderNavSearchResults(query, resultsEl) {
+  var index = window._searchIndex || [];
+  var matches = index.filter(function(item) {
+    return (item.title || '').toLowerCase().includes(query)
+        || (item.excerpt || '').toLowerCase().includes(query)
+        || (item.rubrik || '').toLowerCase().includes(query);
+  }).slice(0, 6);
+
+  if (!matches.length) {
+    resultsEl.innerHTML = '<div style="padding:12px 14px;font-family:var(--sans);font-size:12px;color:var(--muted);">Tidak ada hasil untuk "' + query + '"</div>';
+    return;
+  }
+  resultsEl.innerHTML = matches.map(function(item) {
+    return '<a href="' + item.url + '" class="nav-search-result-item">'
+      + '<div class="nav-search-result-tag">' + (item.rubrik || '') + '</div>'
+      + '<div class="nav-search-result-title">' + (item.title || '') + '</div>'
+      + '</a>';
+  }).join('');
 }
 
-
+// ---- Rubrik filter (articles listing page) ----
 document.addEventListener('DOMContentLoaded', function() {
   var filters = document.querySelectorAll('.rubrik-filter');
   if (!filters.length) return;
 
   filters.forEach(function(btn) {
     btn.addEventListener('click', function() {
-      _activeRubrik = btn.getAttribute('data-filter');
+      var rubrik = btn.getAttribute('data-filter');
       filters.forEach(function(f) { f.classList.remove('active'); });
       btn.classList.add('active');
-      applyArticleFilters();
+      filterCards(rubrik, window._currentSearch || '');
     });
   });
 
-  // Check URL param on load
   var params = new URLSearchParams(window.location.search);
   var rubrikParam = params.get('rubrik');
   if (rubrikParam) {
@@ -150,35 +119,37 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-// ---- Signup form (newsletter / registration) ----
-document.addEventListener('DOMContentLoaded', function() {
-  var forms = document.querySelectorAll('.signup-form-el');
-  forms.forEach(function(form) {
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-      var nameInput  = form.querySelector('#signup-name');
-      var emailInput = form.querySelector('#signup-email') || form.querySelector('.signup-input');
-      var name  = nameInput  ? nameInput.value.trim()  : '';
-      var email = emailInput ? emailInput.value.trim()  : '';
-      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return;
-
-      fetch('https://formspree.io/f/mgobolpq', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({ name: name, email: email, _subject: 'Pendaftaran Sophia baru: ' + (name||email) })
-      }).then(function(res) {
-        if (res.ok) {
-          form.innerHTML = '<p style="color:var(--sains);font-weight:600;font-size:15px;">Terima kasih' + (name ? ', ' + name : '') + '! Cek emailmu untuk konfirmasi.</p>';
-          setTimeout(function() { openAuthModal('register'); }, 1000);
-        }
-      }).catch(function() {});
-    });
+function filterCards(rubrik, search) {
+  var cards = document.querySelectorAll('.article-card[data-rubrik], .article-row[data-rubrik], .article-featured[data-rubrik]');
+  var visible = 0;
+  cards.forEach(function(card) {
+    var cardRubrik = card.getAttribute('data-rubrik') || '';
+    var cardSearch = card.getAttribute('data-search') || '';
+    var matchR = rubrik === 'semua' || cardRubrik === rubrik;
+    var matchS = !search || cardSearch.includes(search.toLowerCase());
+    var show = matchR && matchS;
+    card.style.display = show ? '' : 'none';
+    if (show) visible++;
   });
-});
+  var noResults = document.getElementById('noResults');
+  if (noResults) noResults.style.display = visible === 0 ? 'block' : 'none';
+}
+
+function filterArticlesBySearch(val) {
+  window._currentSearch = val;
+  var activeBtn = document.querySelector('.rubrik-filter.active');
+  var rubrik = activeBtn ? activeBtn.getAttribute('data-filter') : 'semua';
+  filterCards(rubrik, val);
+}
 
 // ---- Scroll reveal ----
 document.addEventListener('DOMContentLoaded', function() {
-  if (!('IntersectionObserver' in window)) return;
+  if (!('IntersectionObserver' in window)) {
+    document.querySelectorAll('.fade-up').forEach(function(el) {
+      el.style.opacity = '1';
+    });
+    return;
+  }
   var observer = new IntersectionObserver(function(entries) {
     entries.forEach(function(entry) {
       if (entry.isIntersecting) {
@@ -186,8 +157,7 @@ document.addEventListener('DOMContentLoaded', function() {
         observer.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.1 });
-
+  }, { threshold: 0.08 });
   document.querySelectorAll('.fade-up').forEach(function(el) {
     el.style.animationPlayState = 'paused';
     observer.observe(el);
