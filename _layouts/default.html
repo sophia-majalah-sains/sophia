@@ -24,7 +24,7 @@
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="{{ page.title }}">
   {% else %}
-  <meta property="og:image" content="{{ '/assets/images/sophia-logo-new-text.png' | absolute_url }}">
+  <meta property="og:image" content="{{ '/assets/images/sophia-logo-full.png' | absolute_url }}">
   {% endif %}
   {% if page.layout == 'article' %}
   <meta property="article:published_time" content="{{ page.date | date_to_xmlschema }}">
@@ -40,7 +40,7 @@
   {% if page.cover_image %}
   <meta name="twitter:image" content="{% if page.cover_image contains 'http' %}{{ page.cover_image }}{% else %}{{ page.cover_image | absolute_url }}{% endif %}">
   {% else %}
-  <meta name="twitter:image" content="{{ '/assets/images/sophia-logo-new-text.png' | absolute_url }}">
+  <meta name="twitter:image" content="{{ '/assets/images/sophia-logo-full.png' | absolute_url }}">
   {% endif %}
 
   <!-- Structured Data -->
@@ -51,7 +51,7 @@
     "@type": "NewsArticle",
     "headline": "{{ page.title | escape }}",
     "description": "{{ page.excerpt | strip_html | truncate: 200 | escape }}",
-    "image": "{% if page.cover_image contains 'http' %}{{ page.cover_image }}{% elsif page.cover_image %}{{ page.cover_image | absolute_url }}{% else %}{{ '/assets/images/sophia-logo-new-text.png' | absolute_url }}{% endif %}",
+    "image": "{% if page.cover_image contains 'http' %}{{ page.cover_image }}{% elsif page.cover_image %}{{ page.cover_image | absolute_url }}{% else %}{{ '/assets/images/sophia-logo-full.png' | absolute_url }}{% endif %}",
     "datePublished": "{{ page.date | date_to_xmlschema }}",
     "dateModified": "{{ page.date | date_to_xmlschema }}",
     "author": {
@@ -64,7 +64,7 @@
       "name": "Sophia",
       "logo": {
         "@type": "ImageObject",
-        "url": "{{ '/assets/images/sophia-logo-new.png' | absolute_url }}"
+        "url": "{{ '/assets/images/sophia-logo-icon.png' | absolute_url }}"
       }
     },
     "mainEntityOfPage": {
@@ -94,7 +94,7 @@
       "name": "Sophia",
       "logo": {
         "@type": "ImageObject",
-        "url": "{{ '/assets/images/sophia-logo-new.png' | absolute_url }}"
+        "url": "{{ '/assets/images/sophia-logo-icon.png' | absolute_url }}"
       }
     }
   }
@@ -102,9 +102,9 @@
   {% endif %}
 
   <!-- Favicon — Sophia logo icon -->
-  <link rel="icon" type="image/png" href="{{ '/assets/images/sophia-logo-new.png' | relative_url }}">
-  <link rel="shortcut icon" href="{{ '/assets/images/sophia-logo-new.png' | relative_url }}">
-  <link rel="apple-touch-icon" href="{{ '/assets/images/sophia-logo-new.png' | relative_url }}">
+  <link rel="icon" type="image/png" href="{{ '/assets/images/sophia-logo-icon.png' | relative_url }}">
+  <link rel="shortcut icon" href="{{ '/assets/images/sophia-logo-icon.png' | relative_url }}">
+  <link rel="apple-touch-icon" href="{{ '/assets/images/sophia-logo-icon.png' | relative_url }}">
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -136,7 +136,7 @@
   <div class="masthead">
     <div class="masthead-inner">
       <a href="{{ '/' | relative_url }}">
-        <img src="{{ '/assets/images/sophia-logo-new.png' | relative_url }}" alt="Sophia" style="width:36px;height:36px;object-fit:contain;flex-shrink:0;">
+        <svg width="36" height="36" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;"><rect width="100" height="100" rx="4" fill="#3535C8"/><path d="M16 16 H74 V48 H34 V52 H84 V84 H26 V52 H66 V48 H16 Z" fill="white"/><circle cx="35" cy="33" r="14" fill="#E31B1B"/><circle cx="65" cy="67" r="11" fill="#E31B1B"/></svg>
       </a>
       <a href="{{ '/' | relative_url }}" class="masthead-wordmark">sophia</a>
     </div>
