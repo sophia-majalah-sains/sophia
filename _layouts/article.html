@@ -4,269 +4,221 @@ layout: default
 
 {% assign rubrik_slug = page.rubrik | downcase | replace: ' ', '-' | replace: '&', '' | replace: '--', '-' %}
 
+<!-- Reading progress bar -->
+<div class="reading-progress-bar"><div class="reading-progress-fill" id="progressFill"></div></div>
+
+<!-- NewsArticle Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "NewsArticle",
+  "headline": "{{ page.title | escape }}",
+  "description": "{{ page.description | default: page.excerpt | strip_html | strip_newlines | escape }}",
+  "datePublished": "{{ page.date | date_to_xmlschema }}",
+  "dateModified": "{{ page.last_modified_at | default: page.date | date_to_xmlschema }}",
+  "url": "{{ page.url | absolute_url }}",
+  "inLanguage": "id",
+  "author": {
+    "@type": "Person",
+    "name": "{{ page.author | default: 'Fariz Armesta' }}"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Majalah Digital Sophia",
+    "url": "https://discoversophia.id",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://discoversophia.id/assets/images/sophia-logo-icon.png"
+    }
+  }{% if page.cover_image %},
+  "image": {
+    "@type": "ImageObject",
+    "url": "{% if page.cover_image contains 'http' %}{{ page.cover_image }}{% else %}{{ page.cover_image | absolute_url }}{% endif %}"
+  }{% endif %}
+}
+</script>
+
 <!-- BreadcrumbList Schema -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position": 1,
-      "name": "Home",
-      "item": "https://discoversophia.id"
-    },
-    {
-      "@type": "ListItem",
-      "position": 2,
-      "name": "Artikel",
-      "item": "https://discoversophia.id/artikel"
-    },
-    {
-      "@type": "ListItem",
-      "position": 3,
-      "name": "{{ page.rubrik }}",
-      "item": "https://discoversophia.id/artikel?rubrik={{ rubrik_slug }}"
-    },
-    {
-      "@type": "ListItem",
-      "position": 4,
-      "name": "{{ page.title | escape }}",
-      "item": "{{ page.url | absolute_url }}"
-    }
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://discoversophia.id" },
+    { "@type": "ListItem", "position": 2, "name": "Artikel", "item": "https://discoversophia.id/artikel" },
+    { "@type": "ListItem", "position": 3, "name": "{{ page.rubrik }}", "item": "https://discoversophia.id/artikel?rubrik={{ rubrik_slug }}" },
+    { "@type": "ListItem", "position": 4, "name": "{{ page.title | escape }}", "item": "{{ page.url | absolute_url }}" }
   ]
 }
 </script>
 
-<!-- Visual breadcrumb -->
-<nav class="article-breadcrumb" aria-label="breadcrumb">
-  <div class="breadcrumb-inner">
-    <a href="/">Home</a>
-    <span class="bc-sep">›</span>
-    <a href="/artikel">Artikel</a>
-    <span class="bc-sep">›</span>
-    <a href="/artikel?rubrik={{ rubrik_slug }}">{{ page.rubrik }}</a>
-    <span class="bc-sep">›</span>
-    <span class="bc-current">{{ page.title | truncate: 50 }}</span>
+<div class="article-page">
+<div class="article-wrap">
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <a href="{{ '/' | relative_url }}">Beranda</a><span>›</span>
+    <a href="{{ '/artikel' | relative_url }}">Artikel</a><span>›</span>
+    <a href="{{ '/artikel' | relative_url }}?rubrik={{ rubrik_slug }}">{{ page.rubrik }}</a>
   </div>
-</nav>
 
-<article class="article-page">
-
-  <header class="article-header" data-rubrik="{{ page.rubrik | downcase | replace: ' ', '-' }}">
-    <div class="article-header-inner">
-      <div class="article-meta-top">
-        <span class="rubrik-badge rubrik-{{ page.rubrik | downcase | replace: ' ', '-' }}">{{ page.rubrik }}</span>
-        {% if page.edisi %}<span class="edisi-tag">Edisi {{ page.edisi }}</span>{% endif %}
-      </div>
-      <h1 class="article-title">{{ page.title }}</h1>
-      {% if page.subtitle %}<p class="article-subtitle">{{ page.subtitle }}</p>{% endif %}
-      <div class="article-byline">
-        <span class="byline-author">{{ page.author | default: "Fariz Armesta" }}</span>
-        <span class="byline-sep">·</span>
-        <time class="byline-date">{{ page.date | date: "%-d %B %Y" }}</time>
-        {% if page.read_time %}<span class="byline-sep">·</span><span class="byline-read">{{ page.read_time }} menit baca</span>{% endif %}
-      </div>
+  <!-- Article Header -->
+  <div class="article-header">
+    {% if page.rubrik == 'Cover Story' %}<span class="article-badge">Cover Story</span>{% endif %}
+    <div class="article-rubrik-line">
+      <span class="article-rubrik">{{ page.rubrik }}</span>
+      <span class="article-rubrik-dot"></span>
+      {% endif %}
     </div>
-  </header>
+    <h1 class="article-title">{{ page.title }}</h1>
+    {% if page.subtitle %}
+    <div class="article-subtitle">{{ page.subtitle }}</div>
+    {% endif %}
+    <div class="article-byline-row">
+      <div class="article-byline">Oleh <span>{{ page.author | default: 'Fariz Armesta' }}</span> &middot; Sophia</div>
+      <div class="article-meta-line">
+        {{ page.date | date: "%-d %B %Y" }}
+        {% if page.read_time %}<span class="article-meta-sep">·</span>{{ page.read_time }} menit baca{% endif %}
+      </div>
+      {% if page.access == 'members' %}
+      <span class="ar-access">Anggota</span>
+      {% endif %}
+    </div>
+    <div class="share-row">
+      <span class="share-label">Bagikan:</span>
+      <button class="share-btn" onclick="window.open('https://www.instagram.com/','_blank')">Instagram</button>
+      <button class="share-btn" onclick="window.open('https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent(document.title),'_blank')">X / Twitter</button>
+      <button class="share-btn" onclick="window.open('https://wa.me/?text='+encodeURIComponent(document.title+' '+window.location.href),'_blank')">WhatsApp</button>
+      <button class="share-btn" onclick="window.open('https://t.me/share/url?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent(document.title),'_blank')">Telegram</button>
+      <button class="share-btn" onclick="navigator.clipboard.writeText(window.location.href).then(function(){this.textContent='Tersalin!';setTimeout(function(){},1200)}.bind(this))">Salin Tautan</button>
+    </div>
+  </div>
 
+  <!-- Cover Image -->
   {% if page.cover_image %}
-  <div class="article-cover">
+  <div class="cover-image-full">
     {% if page.cover_image contains 'http' %}
     <img src="{{ page.cover_image }}" alt="{{ page.title }}" style="object-position: {{ page.cover_position | default: 'center center' }}">
     {% else %}
     <img src="{{ page.cover_image | relative_url }}" alt="{{ page.title }}" style="object-position: {{ page.cover_position | default: 'center center' }}">
     {% endif %}
-    {% if page.cover_caption %}<p class="cover-caption">{{ page.cover_caption }}</p>{% endif %}
+  </div>
+  {% else %}
+  <div class="cover-image-full">
+    <div class="cover-image-placeholder">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+      <span>Foto Artikel</span>
+    </div>
   </div>
   {% endif %}
 
-  <div class="article-body-wrap">
+  <!-- Body Layout -->
+  <div class="article-body-layout">
 
-    {% if page.access == "members" %}
-      <div class="article-content article-teaser" id="article-content">
-        {{ content }}
-      </div>
-      <div class="article-paywall" id="article-paywall">
-        <div class="paywall-blur"></div>
-        <div class="paywall-card">
-          <div class="paywall-icon">S</div>
-          <h2 class="paywall-title">Lanjutkan membaca di Sophia</h2>
-          <p class="paywall-desc">Artikel ini khusus untuk anggota terdaftar. Daftar gratis untuk mengakses seluruh konten Sophia.</p>
-          <div class="paywall-actions">
-            <button class="btn-paywall-login" onclick="openAuthModal('login')">Log In</button>
-            <button class="btn-paywall-register" onclick="openAuthModal('register')">Daftar Gratis</button>
+    <article class="article-body">
+
+      {% if page.access == 'members' %}
+        {% assign user_logged_in = false %}
+        <div class="article-content article-teaser" id="article-content">
+          {{ content }}
+        </div>
+        <div class="article-paywall" id="article-paywall">
+          <div class="paywall-blur"></div>
+          <div class="paywall-card">
+            <div class="paywall-title">Lanjutkan Membaca</div>
+            <div class="paywall-desc">Artikel ini tersedia untuk anggota Sophia. Daftar gratis untuk mengakses seluruh artikel.</div>
+            <div class="paywall-actions">
+              <button class="btn-paywall-login" onclick="openAuthModal('login')">Log In</button>
+              <button class="btn-paywall-register" onclick="openAuthModal('register')">Daftar Gratis</button>
+            </div>
+            <div class="paywall-note">Sudah punya akun? <a href="#" onclick="openAuthModal('login');return false;" style="color:var(--red);font-weight:600;">Masuk di sini</a></div>
           </div>
-          <p class="paywall-note">Sudah punya akun? <a href="#" onclick="openAuthModal('login'); return false;">Masuk di sini</a></p>
+        </div>
+      {% else %}
+        <div class="article-content" id="article-content">
+          {{ content }}
+        </div>
+      {% endif %}
+
+      <!-- Tags -->
+      {% if page.tags %}
+      <div class="article-tags">
+        <span class="tags-label">Tag:</span>
+        {% for tag in page.tags %}
+        <span class="article-tag">{{ tag }}</span>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <a href="{{ '/artikel' | relative_url }}" class="back-to-articles">← Kembali ke semua artikel</a>
+
+      <!-- CTA -->
+      <div class="article-cta-box">
+        <div class="cta-head">Ikuti Sophia</div>
+        <div class="cta-body">Dapatkan artikel pilihan tentang sains, teknologi, dan budaya yang benar-benar penting untuk keluarga Indonesia. Terbit berkala. Tanpa iklan untuk subscriber.</div>
+        <a href="https://karyakarsa.com/sophia" class="cta-btn">Ikuti Sophia →</a>
+      </div>
+
+    </article>
+
+    <!-- Sidebar -->
+    <aside class="article-sidebar">
+
+      <div class="asb-block">
+        <div class="asb-label">Artikel Lainnya</div>
+        {% assign other_articles = site.articles | sort: 'date' | reverse %}
+        {% for a in other_articles limit: 5 %}
+        {% unless a.url == page.url %}
+        <div class="related-item">
+          <div class="related-tag">{{ a.rubrik }}</div>
+          <a href="{{ a.url | relative_url }}">
+            <div class="related-title">{{ a.title }}</div>
+          </a>
+          <div class="related-meta">
+            {{ a.date | date: "%-d %b %Y" }}{% if a.read_time %} · {{ a.read_time }} menit{% endif %}{% if a.access == 'members' %}<span class="related-access">Anggota</span>{% endif %}
+          </div>
+        </div>
+        {% endunless %}
+        {% endfor %}
+      </div>
+
+      <div class="asb-block">
+        <div class="asb-subscribe">
+          <div class="asb-sub-head">Ikuti Sophia</div>
+          <div class="asb-sub-body">Terbit berkala. Tanpa iklan untuk subscriber.</div>
+          <a href="https://karyakarsa.com/sophia" class="asb-sub-btn">Berlangganan →</a>
         </div>
       </div>
-    {% else %}
-      <div class="article-content" id="article-content">
-        {{ content }}
-      </div>
-    {% endif %}
 
+    </aside>
   </div>
 
-  <footer class="article-footer">
-    <div class="article-tags">
-      {% for tag in page.tags %}
-      <span class="article-tag">#{{ tag }}</span>
-      {% endfor %}
-    </div>
-    <a href="{{ '/artikel' | relative_url }}" class="back-to-articles">← Semua Artikel</a>
-  </footer>
-
-  <!-- Share section -->
-  <div class="article-share-wrap">
-    <div class="share-label">Bagikan artikel ini</div>
-    <div class="share-buttons">
-      <a class="share-btn share-wa" id="share-wa" href="#" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-        WhatsApp
-      </a>
-      <a class="share-btn share-instagram" id="share-instagram" href="#">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
-        Instagram
-      </a>
-      <a class="share-btn share-twitter" id="share-twitter" href="#" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-        X
-      </a>
-      <a class="share-btn share-telegram" id="share-telegram" href="#" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
-        Telegram
-      </a>
-      <button class="share-btn share-copy" onclick="copyLink()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
-        Salin Link
-      </button>
-    </div>
-  </div>
-
-</article>
-
-<style>
-.article-share-wrap { max-width:760px; margin:0 auto; padding:32px 40px 64px; border-top:1px solid var(--border); }
-.share-label { font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-lighter); margin-bottom:16px; }
-.share-buttons { display:flex; flex-wrap:wrap; gap:10px; }
-.share-btn { display:inline-flex; align-items:center; gap:8px; padding:9px 16px; border-radius:100px; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600; text-decoration:none; border:none; cursor:pointer; transition:opacity 0.2s,transform 0.15s; }
-.share-btn:hover { opacity:0.85; transform:translateY(-1px); }
-.share-btn svg { width:16px; height:16px; flex-shrink:0; }
-.share-wa        { background:#25D366; color:#fff; }
-.share-instagram { background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888); color:#fff; }
-.share-twitter   { background:#000; color:#fff; }
-.share-telegram  { background:#2CA5E0; color:#fff; }
-.share-copy      { background:var(--cream-dark); color:var(--navy); }
-@media(max-width:680px){ .article-share-wrap { padding:24px 20px 48px; } .share-btn { font-size:12px; padding:8px 12px; } }
-</style>
+</div>
+</div>
 
 <script>
+// Reading progress
+window.addEventListener('scroll', function() {
+  var content = document.getElementById('article-content');
+  if (!content) return;
+  var rect = content.getBoundingClientRect();
+  var total = content.offsetHeight;
+  var scrolled = Math.max(0, -rect.top);
+  var pct = Math.min(100, (scrolled / total) * 100);
+  var fill = document.getElementById('progressFill');
+  if (fill) fill.style.width = pct + '%';
+}, { passive: true });
+
+// Paywall: check if user is logged in
 document.addEventListener('DOMContentLoaded', function() {
-  var pageTitle = document.title.replace(' — Sophia', '').replace(' - Sophia', '');
-  var pageUrl   = window.location.href;
-  var url    = encodeURIComponent(pageUrl);
-  var waText = encodeURIComponent('Hai! Saya baru baca artikel menarik dari Sophia berjudul "' + pageTitle + '". Yuk baca juga! ' + pageUrl);
-  var twText = encodeURIComponent('Baru baca artikel ini dari Sophia dan sangat menarik. "' + pageTitle + '" ' + pageUrl);
-  var tgText = encodeURIComponent('Artikel ini dari Sophia layak banget untuk dibaca. "' + pageTitle + '" ' + pageUrl);
-
-  var wa = document.getElementById('share-wa');
-  var ig = document.getElementById('share-instagram');
-  var tw = document.getElementById('share-twitter');
-  var tg = document.getElementById('share-telegram');
-
-  if (wa) wa.href = 'https://wa.me/?text=' + waText;
-  if (tw) tw.href = 'https://twitter.com/intent/tweet?text=' + twText;
-  if (tg) tg.href = 'https://t.me/share/url?url=' + url + '&text=' + tgText;
-  if (ig) ig.onclick = function(e) {
-    e.preventDefault();
-    navigator.clipboard.writeText(pageUrl).then(function() {
-      var b = document.getElementById('share-instagram'), o = b.innerHTML;
-      b.textContent = '✓ Link disalin!'; b.style.background = '#2D7D52';
-      setTimeout(function() { b.innerHTML = o; b.style.background = ''; }, 2500);
-    });
-  };
-
-  // Track this article as recently read
-  trackArticleRead({
-    title: pageTitle,
-    url: pageUrl,
-    rubrik: document.querySelector('.rubrik-badge') ? document.querySelector('.rubrik-badge').textContent.trim() : '',
-    date: new Date().toISOString()
-  });
+  var paywall = document.getElementById('article-paywall');
+  var teaser = document.getElementById('article-content');
+  if (!paywall) return;
+  var session = null;
+  try { session = JSON.parse(localStorage.getItem('sophia_sb_session')); } catch(e) {}
+  if (session && session.access_token) {
+    paywall.style.display = 'none';
+    if (teaser) teaser.classList.remove('article-teaser');
+  }
 });
-
-function copyLink() {
-  navigator.clipboard.writeText(window.location.href).then(function() {
-    var btn = document.querySelector('.share-copy'), orig = btn.innerHTML;
-    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Tersalin!';
-    btn.style.background = '#2D7D52'; btn.style.color = '#fff';
-    setTimeout(function() { btn.innerHTML = orig; btn.style.background = ''; btn.style.color = ''; }, 2000);
-  });
-}
-
-// Track recently read articles -- saves to Supabase if logged in, localStorage as fallback
-async function trackArticleRead(article) {
-  var SUPABASE_URL = 'https://ayhxgiacqthxalvrezxy.supabase.co';
-  var SUPABASE_KEY = 'sb_publishable_IqdChXiwuHG_svXN2mqK4A_a6WgP_Qr';
-
-  try {
-    // Always save to localStorage as fallback
-    var localKey = 'sophia_recently_read';
-    var localList = JSON.parse(localStorage.getItem(localKey)) || [];
-    localList = localList.filter(function(a) { return a.url !== article.url; });
-    localList.unshift(article);
-    localList = localList.slice(0, 10);
-    localStorage.setItem(localKey, JSON.stringify(localList));
-
-    // If logged in, also save to Supabase
-    var session = null;
-    try { session = JSON.parse(localStorage.getItem('sophia_sb_session')); } catch(e) {}
-    if (!session || !session.access_token) return;
-
-    // Fetch current recently_read from Supabase
-    var userId = session.user && session.user.id;
-    if (!userId) return;
-
-    var fetchRes = await fetch(SUPABASE_URL + '/rest/v1/profiles?id=eq.' + userId + '&select=recently_read', {
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': 'Bearer ' + session.access_token,
-        'Accept': 'application/json'
-      }
-    });
-
-    var rows = await fetchRes.json();
-    var existing = (rows && rows[0] && rows[0].recently_read) || [];
-
-    // Remove duplicate, add to front, keep 10
-    existing = existing.filter(function(a) { return a.url !== article.url; });
-    existing.unshift(article);
-    existing = existing.slice(0, 10);
-
-    // Save back to Supabase
-    await fetch(SUPABASE_URL + '/rest/v1/profiles?id=eq.' + userId, {
-      method: 'PATCH',
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': 'Bearer ' + session.access_token,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=minimal'
-      },
-      body: JSON.stringify({ recently_read: existing })
-    });
-  } catch(e) {}
-}
 </script>
-
-{% if page.access == "members" %}
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    var user = getCurrentUser();
-    if (user) {
-      document.getElementById('article-paywall').style.display = 'none';
-      document.getElementById('article-content').classList.remove('article-teaser');
-    }
-  });
-</script>
-{% endif %}
