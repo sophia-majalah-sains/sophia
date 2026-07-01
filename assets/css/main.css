@@ -1162,3 +1162,22 @@ img[alt="Sophia"] { max-width: 40px; max-height: 40px; width: auto; height: auto
   object-fit: contain !important;
   display: inline-block !important;
 }
+
+/* ── 2. Slogan bar: remove em-dash issue, center text ── */
+.slogan-bar { text-align: center; border-left: none; border-top: 1px solid var(--border); padding: 14px 24px; }
+.slogan-text { max-width: 100%; }
+
+/* ── 3. Nav strip: align left edge with hero inner (max 960px) ── */
+.site-nav { padding-left: 0; }
+.site-nav .nav-item:first-child { padding-left: 0; }
+.site-nav > a:first-child, .site-nav > span:first-child { padding-left: 24px; }
+
+/* ── 4. Kolom section: center pills, red on hover ── */
+.kolom-section { text-align: center; }
+.kolom-pills { justify-content: center; }
+.kolom-pill:hover { border-color: var(--red); color: var(--red); background: var(--white); }
+
+/* ── 5. Subscribe button: more inner padding ── */
+.asb-sub-btn { padding: 12px 0; }
+.signup-btn { padding: 12px 28px; }
+.cta-btn { padding: 12px 24px; }
