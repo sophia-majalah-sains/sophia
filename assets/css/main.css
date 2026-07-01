@@ -1152,3 +1152,13 @@ img[alt="Sophia"] { max-width: 40px; max-height: 40px; width: auto; height: auto
 .footer-logo-img, .site-footer img  { width: 24px !important; height: 24px !important; object-fit: contain; }
 .auth-logo { width: 32px !important; height: 32px !important; object-fit: contain; }
 .footer-logo-img { display: block; }
+
+/* ── EMERGENCY: kill any unsized logo image in nav ── */
+.nav-logo-img, .nav-brand img, img.nav-logo-img {
+  width: 32px !important;
+  height: 32px !important;
+  max-width: 32px !important;
+  max-height: 32px !important;
+  object-fit: contain !important;
+  display: inline-block !important;
+}
