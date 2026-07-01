@@ -1181,3 +1181,12 @@ img[alt="Sophia"] { max-width: 40px; max-height: 40px; width: auto; height: auto
 .asb-sub-btn { padding: 12px 20px !important; font-size: 11px !important; }
 .signup-btn { padding: 12px 28px; }
 .cta-btn { padding: 12px 24px; }
+
+/* ── Nav: align first item with hero-inner left edge ── */
+.site-nav {
+  padding-left: max(0px, calc((100vw - 960px) / 2));
+}
+.site-nav .nav-item:first-child,
+.site-nav > a:first-child {
+  padding-left: 0 !important;
+}
