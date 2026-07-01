@@ -7,79 +7,193 @@ permalink: /artikel/
 <div class="articles-page">
 
   <div class="articles-page-header">
-    <div class="section-inner">
-      <h1 class="fade-up">Semua Artikel</h1>
-      <p class="fade-up fade-up-1">Sains, teknologi, dan budaya untuk keluarga Indonesia</p>
+    <div class="articles-page-eyebrow">Koleksi Artikel</div>
+    <div class="articles-page-title">Semua Artikel</div>
+    <div class="articles-page-sub">Sains, teknologi, dan budaya untuk keluarga Indonesia</div>
+  </div>
+
+  <div class="filter-bar">
+    <span class="filter-label">Kolom:</span>
+    <button class="rubrik-filter active" data-filter="semua">Semua</button>
+    <button class="rubrik-filter" data-filter="sains">Sains</button>
+    <button class="rubrik-filter" data-filter="teknologi">Teknologi</button>
+    <button class="rubrik-filter" data-filter="budaya">Budaya</button>
+    <button class="rubrik-filter" data-filter="pojok-anak">Pojok Anak</button>
+    <button class="rubrik-filter" data-filter="tokoh-inspiratif">Tokoh Inspiratif</button>
+    <button class="rubrik-filter" data-filter="alam-satwa">Alam &amp; Satwa</button>
+    <button class="rubrik-filter" data-filter="cover-story">Cover Story</button>
+    <div class="artikel-search-bar" style="position:relative;">
+      <svg style="position:absolute;left:8px;top:50%;transform:translateY(-50%);opacity:.35;pointer-events:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="artikel-search-input" class="search-input"
+        placeholder="Cari artikel..." autocomplete="off"
+        oninput="filterArticlesBySearch(this.value)">
     </div>
   </div>
 
-  <div class="articles-listing">
-    <div class="section-inner">
+  <div class="articles-layout">
 
-      <!-- Search + Kolom filters -->
-      <div class="artikel-search-bar fade-up" style="margin-bottom:20px;">
-        <div style="position:relative;">
-          <svg style="position:absolute;left:14px;top:50%;transform:translateY(-50%);opacity:0.4;pointer-events:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-          <input type="text" id="artikel-search-input" class="search-input"
-            style="padding-left:40px;width:100%;max-width:400px"
-            placeholder="Cari artikel..." autocomplete="off"
-            oninput="filterArticlesBySearch(this.value)">
+    <main id="articlesList" style="border-right:1px solid var(--border);">
+
+      {% assign all_articles = site.articles | sort: "date" | reverse %}
+      {% for article in all_articles %}
+
+      {% assign rubrik_slug = article.rubrik | downcase | replace: ' ', '-' | replace: '&', '' | replace: '--', '-' %}
+
+      {% if article.featured %}
+      <!-- Featured (Cover Story) -->
+      <a href="{{ article.url | relative_url }}" class="article-featured"
+         data-rubrik="{{ rubrik_slug }}"
+         data-search="{{ article.title | downcase }} {{ article.excerpt | strip_html | downcase }} {{ article.rubrik | downcase }}">
+        <div class="af-body">
+          {% if article.rubrik == 'Cover Story' %}<span class="af-badge">Cover Story</span>{% endif %}
+          <div class="af-tag">{{ article.rubrik }}</div>
+          <div class="af-headline">{{ article.title }}</div>
+          <div class="af-deck">{{ article.excerpt | strip_html | truncate: 160 }}</div>
+          <div class="af-meta">
+            <span>{{ article.date | date: "%-d %b %Y" }}</span>
+            {% if article.read_time %}<span>{{ article.read_time }} menit</span>{% endif %}
+            {% if article.access == 'members' %}<span class="ar-access">Anggota</span>{% endif %}
+          </div>
+        </div>
+        <div class="af-image">
+          {% if article.cover_image %}
+            {% if article.cover_image contains 'http' %}
+            <img src="{{ article.cover_image }}" alt="{{ article.title }}" loading="lazy" style="object-position:{{ article.cover_position | default: 'center center' }}">
+            {% else %}
+            <img src="{{ article.cover_image | relative_url }}" alt="{{ article.title }}" loading="lazy">
+            {% endif %}
+          {% else %}
+          <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#C8C4BE;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+          </div>
+          {% endif %}
+        </div>
+      </a>
+      {% else %}
+      <!-- Regular row -->
+      <a href="{{ article.url | relative_url }}" class="article-row"
+         data-rubrik="{{ rubrik_slug }}"
+         data-search="{{ article.title | downcase }} {{ article.excerpt | strip_html | downcase }} {{ article.rubrik | downcase }}">
+        <div class="ar-thumb">
+          {% if article.cover_image %}
+            {% if article.cover_image contains 'http' %}
+            <img src="{{ article.cover_image }}" alt="{{ article.title }}" loading="lazy" style="object-position:{{ article.cover_position | default: 'center center' }}">
+            {% else %}
+            <img src="{{ article.cover_image | relative_url }}" alt="{{ article.title }}" loading="lazy">
+            {% endif %}
+          {% else %}
+          <div class="ar-thumb-placeholder">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+          </div>
+          {% endif %}
+        </div>
+        <div class="ar-body">
+          <div class="ar-tag">{{ article.rubrik }}</div>
+          <div class="ar-headline">{{ article.title }}</div>
+          <div class="ar-deck">{{ article.excerpt | strip_html | truncate: 120 }}</div>
+          <div class="ar-meta">
+            <span>{{ article.date | date: "%-d %b %Y" }}</span>
+            {% if article.read_time %}<span>{{ article.read_time }} menit</span>{% endif %}
+            {% if article.access == 'members' %}<span class="ar-access">Anggota</span>{% endif %}
+          </div>
+        </div>
+      </a>
+      {% endif %}
+
+      {% endfor %}
+
+      <div class="no-results" id="noResults">
+        <div class="no-results-text">Tidak ada artikel yang cocok.</div>
+      </div>
+
+    </main>
+
+    <aside class="articles-sidebar">
+
+      <div class="asb-block">
+        <div class="asb-label">Jelajahi Kolom</div>
+        <div class="asb-kolom">
+          <div class="asb-kolom-row" onclick="filterByKolom('sains')"><span>Sains</span><span>→</span></div>
+          <div class="asb-kolom-row" onclick="filterByKolom('teknologi')"><span>Teknologi</span><span>→</span></div>
+          <div class="asb-kolom-row" onclick="filterByKolom('budaya')"><span>Budaya</span><span>→</span></div>
+          <div class="asb-kolom-row" onclick="filterByKolom('pojok-anak')"><span>Pojok Anak</span><span>→</span></div>
+          <div class="asb-kolom-row" onclick="filterByKolom('tokoh-inspiratif')"><span>Tokoh Inspiratif</span><span>→</span></div>
+          <div class="asb-kolom-row" onclick="filterByKolom('alam-satwa')"><span>Alam &amp; Satwa</span><span>→</span></div>
         </div>
       </div>
 
-      <!-- Kolom filters -->
-      <div class="rubrik-filters fade-up">
-        <button class="rubrik-filter active" data-filter="semua">Semua</button>
-        <button class="rubrik-filter" data-filter="sains">Sains</button>
-        <button class="rubrik-filter" data-filter="teknologi">Teknologi</button>
-        <button class="rubrik-filter" data-filter="budaya">Budaya</button>
-        <button class="rubrik-filter" data-filter="pojok-anak">Pojok Anak</button>
-        <button class="rubrik-filter" data-filter="tokoh-inspiratif">Tokoh Inspiratif</button>
-        <button class="rubrik-filter" data-filter="alam-satwa">Alam &amp; Satwa</button>
-        <button class="rubrik-filter" data-filter="cover-story">Cover Story</button>
+      <div class="asb-block">
       </div>
 
-      <!-- Article grid -->
-      <div class="articles-grid">
-        {% assign all_articles = site.articles | sort: "date" | reverse %}
-        {% for article in all_articles %}
-        <a href="{{ article.url | relative_url }}" class="article-card fade-up"
-           data-rubrik="{{ article.rubrik | downcase | replace: ' ', '-' | replace: '&', '' | replace: '--', '-' }}">
-          <div class="card-img">
-            {% if article.cover_image %}
-            {% if article.cover_image contains 'http' %}
-            <img src="{{ article.cover_image }}" alt="{{ article.title }}" loading="lazy" style="object-position: {{ article.cover_position | default: 'center center' }}">
-            {% else %}
-            <img src="{{ article.cover_image | relative_url }}" alt="{{ article.title }}" loading="lazy" style="object-position: {{ article.cover_position | default: 'center center' }}">
-            {% endif %}
-            {% else %}
-            <div class="card-img-placeholder">{{ article.rubrik | slice: 0 }}</div>
-            {% endif %}
-            {% if article.access == "members" %}
-            <span class="card-members-badge">Anggota</span>
-            {% endif %}
-          </div>
-          <div class="card-body">
-            <span class="card-rubrik rubrik-{{ article.rubrik | downcase | replace: ' ', '-' | replace: '&', '' | replace: '--', '-' }}">{{ article.rubrik }}</span>
-            <h2 class="card-title">{{ article.title }}</h2>
-            <p class="card-excerpt">{{ article.excerpt | strip_html | truncate: 140 }}</p>
-            <div class="card-meta">
-              <time>{{ article.date | date: "%-d %b %Y" }}</time>
-              {% if article.read_time %}
-              <span class="card-meta-sep">·</span>
-              <span>{{ article.read_time }} menit</span>
-              {% endif %}
-              {% if article.edisi %}
-              <span class="card-meta-sep">·</span>
-              <span>Edisi {{ article.edisi }}</span>
-              {% endif %}
-            </div>
-          </div>
-        </a>
-        {% endfor %}
+      <div class="asb-block">
+        <div class="asb-subscribe">
+          <div class="asb-sub-head">Ikuti Sophia</div>
+          <div class="asb-sub-body">Terbit berkala. Tanpa iklan untuk subscriber. Bisa dibatalkan kapan saja.</div>
+          <button class="asb-sub-btn" onclick="openAuthModal('register')">Daftar Gratis →</button>
+        </div>
       </div>
 
-    </div>
+    </aside>
   </div>
 
 </div>
+
+<script>
+var currentFilter = 'semua';
+var currentSearch = '';
+
+// Rubrik filter buttons
+document.querySelectorAll('.rubrik-filter').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    currentFilter = btn.getAttribute('data-filter');
+    document.querySelectorAll('.rubrik-filter').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    applyFilters();
+  });
+});
+
+function filterByKolom(slug) {
+  currentFilter = slug;
+  document.querySelectorAll('.rubrik-filter').forEach(function(b) {
+    b.classList.toggle('active', b.getAttribute('data-filter') === slug);
+  });
+  applyFilters();
+  document.getElementById('articlesList').scrollIntoView({ behavior: 'smooth' });
+}
+
+function filterArticlesBySearch(val) {
+  currentSearch = val.toLowerCase().trim();
+  applyFilters();
+}
+
+function applyFilters() {
+  var rows = document.querySelectorAll('.article-row, .article-featured');
+  var visible = 0;
+  rows.forEach(function(row) {
+    var rubrik = row.dataset.rubrik || '';
+    var search = row.dataset.search || '';
+    var matchFilter = currentFilter === 'semua' || rubrik === currentFilter;
+    var matchSearch = !currentSearch || search.includes(currentSearch);
+    var show = matchFilter && matchSearch;
+    row.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+  var noResults = document.getElementById('noResults');
+  if (noResults) noResults.style.display = visible === 0 ? 'block' : 'none';
+}
+
+// URL param on load
+document.addEventListener('DOMContentLoaded', function() {
+  var params = new URLSearchParams(window.location.search);
+  var rubrik = params.get('rubrik');
+  if (rubrik) {
+    var btn = document.querySelector('.rubrik-filter[data-filter="' + rubrik + '"]');
+    if (btn) btn.click();
+  }
+  var q = params.get('q');
+  if (q) {
+    var input = document.getElementById('artikel-search-input');
+    if (input) { input.value = q; filterArticlesBySearch(q); }
+  }
+});
+</script>
