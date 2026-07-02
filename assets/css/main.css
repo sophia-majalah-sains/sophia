@@ -1190,3 +1190,14 @@ img[alt="Sophia"] { max-width: 40px; max-height: 40px; width: auto; height: auto
 .site-nav > a:first-child {
   padding-left: 0 !important;
 }
+
+/* ── Nav mobile: ensure minimum left padding on small screens ── */
+@media (max-width: 960px) {
+  .site-nav {
+    padding-left: 0 !important;
+  }
+  .site-nav .nav-item:first-child,
+  .site-nav > a:first-child {
+    padding-left: 16px !important;
+  }
+}
